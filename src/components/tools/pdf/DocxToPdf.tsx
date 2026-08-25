@@ -82,6 +82,37 @@ export default function DocxToPdf() {
 
   // ── Step 2: Convert rendered HTML → PDF via html2canvas + jspdf ──────────
 
+  /**
+   * Recursively replace modern CSS color functions (lab/oklab/lch/oklch)
+   * that html2canvas doesn't support with a neutral fallback color.
+   * These are used by some DOCX themes for subtle tints.
+   */
+  function sanitizeColors(el: HTMLElement) {
+    const MODERN_COLOR_RE = /(?:lab|oklab|lch|oklch|color)\s*\([^)]+\)/gi;
+    // Walk inline styles
+    const all = el.querySelectorAll<HTMLElement>("*");
+    all.forEach(child => {
+      const style = child.getAttribute("style");
+      if (style && MODERN_COLOR_RE.test(style)) {
+        child.setAttribute("style", style.replace(MODERN_COLOR_RE, "#000000"));
+      }
+      // Also patch color/background-color computed inline
+      if (child.style.color && MODERN_COLOR_RE.test(child.style.color)) {
+        child.style.color = "#000000";
+      }
+      if (child.style.backgroundColor && MODERN_COLOR_RE.test(child.style.backgroundColor)) {
+        child.style.backgroundColor = "transparent";
+      }
+    });
+    // Walk stylesheets inside the element's shadow or injected <style> tags
+    const styleTags = el.querySelectorAll<HTMLStyleElement>("style");
+    styleTags.forEach(st => {
+      if (MODERN_COLOR_RE.test(st.textContent ?? "")) {
+        st.textContent = (st.textContent ?? "").replace(MODERN_COLOR_RE, "#000000");
+      }
+    });
+  }
+
   const handleDownloadPdf = useCallback(async () => {
     const container = containerRef.current;
     if (!container || !rendered || !file) return;
@@ -91,70 +122,64 @@ export default function DocxToPdf() {
     setError(null);
 
     try {
-      // Dynamically import heavy libraries to keep initial bundle small
       const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
         import("html2canvas"),
         import("jspdf"),
       ]);
 
-      // A4 dimensions in mm and pts
-      const A4_W_MM = 210;
-      const A4_H_MM = 297;
-      const MARGIN_MM = 10;
+      const A4_W_MM     = 210;
+      const A4_H_MM     = 297;
+      const MARGIN_MM   = 10;
       const CONTENT_W_MM = A4_W_MM - MARGIN_MM * 2;
 
-      // Find all docx page wrappers — docx-preview creates one per page
+      // Sanitize modern CSS colors before capturing
+      sanitizeColors(container);
+
       const pages = Array.from(
         container.querySelectorAll<HTMLElement>(".docx-wrapper > section, .docx-wrapper .docx")
       );
-      // Fallback: capture the whole container as one big image if no pages found
       const targets: HTMLElement[] = pages.length > 0 ? pages : [container];
 
-      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const pdf   = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
       let isFirst = true;
 
       for (let i = 0; i < targets.length; i++) {
         const target = targets[i];
-        setProgress(Math.round(((i) / targets.length) * 90));
+        setProgress(Math.round((i / targets.length) * 90));
 
-        // Make sure the element is visible for capture
         const canvas = await html2canvas(target, {
-          scale: 2,                    // 2× for retina quality
+          scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: "#ffffff",
           logging: false,
-          // Expand to full height (no clipping)
           height: target.scrollHeight,
           windowHeight: target.scrollHeight,
+          // Sanitize on the cloned DOM too (html2canvas clones before rendering)
+          onclone: (_doc, clonedEl) => {
+            sanitizeColors(clonedEl);
+          },
         });
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.92);
-        const canvasW = canvas.width;
-        const canvasH = canvas.height;
+        const imgData  = canvas.toDataURL("image/jpeg", 0.92);
+        const canvasW  = canvas.width;
+        const canvasH  = canvas.height;
+        const imgW_mm  = CONTENT_W_MM;
+        const imgH_mm  = (canvasH / canvasW) * imgW_mm;
 
-        // Scale image to fit within content width, preserving aspect ratio
-        const imgW_mm = CONTENT_W_MM;
-        const imgH_mm = (canvasH / canvasW) * imgW_mm;
-
-        // Paginate: if image is taller than one A4 page, split across pages
         const pageContentH = A4_H_MM - MARGIN_MM * 2;
-        const totalPages = Math.ceil(imgH_mm / pageContentH);
+        const totalPages   = Math.ceil(imgH_mm / pageContentH);
 
         for (let p = 0; p < totalPages; p++) {
           if (!isFirst) pdf.addPage();
           isFirst = false;
 
-          // Portion of the canvas to show on this page
           const sliceTop_mm = p * pageContentH;
           const sliceH_mm   = Math.min(pageContentH, imgH_mm - sliceTop_mm);
+          const px_per_mm   = canvasW / imgW_mm;
+          const srcY        = Math.round(sliceTop_mm * px_per_mm);
+          const srcH        = Math.round(sliceH_mm   * px_per_mm);
 
-          // Map mm back to canvas px
-          const px_per_mm = canvasW / imgW_mm;
-          const srcY  = Math.round(sliceTop_mm * px_per_mm);
-          const srcH  = Math.round(sliceH_mm   * px_per_mm);
-
-          // Create a cropped canvas for this slice
           const slice = document.createElement("canvas");
           slice.width  = canvasW;
           slice.height = srcH;
@@ -169,16 +194,13 @@ export default function DocxToPdf() {
       }
 
       setProgress(100);
-
-      // Generate blob and trigger download directly — no print dialog
-      const pdfBlob = pdf.output("blob");
+      const pdfBlob  = pdf.output("blob");
       const fileName = file.name.replace(/\.docx?$/i, ".pdf");
       triggerDownload(pdfBlob, fileName);
 
     } catch (e) {
       setError(
-        `Conversion failed: ${e instanceof Error ? e.message : "Unknown error"}. ` +
-        "Try a simpler document or one with fewer images."
+        `Conversion failed: ${e instanceof Error ? e.message : "Unknown error"}.`
       );
     } finally {
       setConverting(false);
