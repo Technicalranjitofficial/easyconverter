@@ -1,44 +1,33 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { Loader2, FileText, Eye, Download, RotateCcw, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Loader2, FileText, Eye, Download, RotateCcw,
+  AlertCircle, CheckCircle2,
+} from "lucide-react";
 import { formatBytes } from "@/lib/utils/fileUtils";
+import { triggerDownload } from "@/lib/utils/downloadUtils";
 
 const ACCEPTED_EXT = [".docx", ".doc"];
 
-const PRINT_STYLES = `
-  @page { size: A4; margin: 18mm 22mm; }
-  body {
-    font-family: 'Calibri', 'Arial', sans-serif;
-    font-size: 11pt;
-    line-height: 1.5;
-    color: #000;
-    background: #fff;
-    margin: 0; padding: 0;
-  }
-  .docx-wrapper { background: none !important; padding: 0 !important; }
-  .docx { width: 100% !important; min-height: auto !important; padding: 0 !important; box-shadow: none !important; margin: 0 !important; }
-  @media print {
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    * { box-shadow: none !important; }
-  }
-`;
-
 export default function DocxToPdf() {
-  const [file, setFile]         = useState<File | null>(null);
-  const [loading, setLoading]   = useState(false);
-  const [rendered, setRendered] = useState(false);
-  const [error, setError]       = useState<string | null>(null);
-  const [printing, setPrinting] = useState(false);
+  const [file, setFile]           = useState<File | null>(null);
+  const [loading, setLoading]     = useState(false);
+  const [rendered, setRendered]   = useState(false);
+  const [converting, setConverting] = useState(false);
+  const [progress, setProgress]   = useState(0);          // 0–100
+  const [error, setError]         = useState<string | null>(null);
 
-  // Always-mounted container — never conditionally rendered
+  // Always-mounted container — ref is never null after first render
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // ── File selection ────────────────────────────────────────────────────────
 
   const selectFile = (f: File) => {
     setFile(f);
     setRendered(false);
     setError(null);
-    // Clear previous render
+    setProgress(0);
     if (containerRef.current) containerRef.current.innerHTML = "";
   };
 
@@ -56,24 +45,19 @@ export default function DocxToPdf() {
     e.target.value = "";
   };
 
-  // Render button handler — ref is guaranteed mounted here
+  // ── Step 1: Render DOCX → HTML preview ───────────────────────────────────
+
   const handleRender = useCallback(async () => {
     if (!file) return;
     const container = containerRef.current;
-    if (!container) {
-      setError("Preview container not found. Please refresh the page and try again.");
-      return;
-    }
+    if (!container) { setError("Preview container not ready. Please refresh."); return; }
 
-    setLoading(true);
-    setError(null);
+    setLoading(true); setError(null);
     container.innerHTML = "";
 
     try {
-      // Dynamic import to avoid SSR issues
       const { renderAsync } = await import("docx-preview");
       const buf = await file.arrayBuffer();
-
       await renderAsync(buf, container, undefined, {
         className: "docx-preview",
         inWrapper: true,
@@ -87,69 +71,132 @@ export default function DocxToPdf() {
         renderFootnotes: true,
         renderEndnotes: true,
       });
-
       setRendered(true);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      setError(`Rendering failed: ${msg}`);
+      setError(e instanceof Error ? e.message : "Failed to render document.");
       container.innerHTML = "";
     } finally {
       setLoading(false);
     }
   }, [file]);
 
-  // Print via hidden iframe
-  const handleSaveAsPdf = useCallback(() => {
+  // ── Step 2: Convert rendered HTML → PDF via html2canvas + jspdf ──────────
+
+  const handleDownloadPdf = useCallback(async () => {
     const container = containerRef.current;
-    if (!container || !rendered) return;
-    setPrinting(true);
+    if (!container || !rendered || !file) return;
 
-    const iframe = document.createElement("iframe");
-    iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;visibility:hidden;";
-    document.body.appendChild(iframe);
+    setConverting(true);
+    setProgress(0);
+    setError(null);
 
-    const iframeDoc = iframe.contentDocument ?? iframe.contentWindow?.document;
-    if (!iframeDoc) { setPrinting(false); document.body.removeChild(iframe); return; }
+    try {
+      // Dynamically import heavy libraries to keep initial bundle small
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
 
-    const docName = file?.name?.replace(/\.docx?$/i, "") ?? "document";
+      // A4 dimensions in mm and pts
+      const A4_W_MM = 210;
+      const A4_H_MM = 297;
+      const MARGIN_MM = 10;
+      const CONTENT_W_MM = A4_W_MM - MARGIN_MM * 2;
 
-    iframeDoc.open();
-    iframeDoc.write(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>${docName}</title>
-  <style>${PRINT_STYLES}</style>
-</head>
-<body>${container.innerHTML}</body>
-</html>`);
-    iframeDoc.close();
+      // Find all docx page wrappers — docx-preview creates one per page
+      const pages = Array.from(
+        container.querySelectorAll<HTMLElement>(".docx-wrapper > section, .docx-wrapper .docx")
+      );
+      // Fallback: capture the whole container as one big image if no pages found
+      const targets: HTMLElement[] = pages.length > 0 ? pages : [container];
 
-    const doPrint = () => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-      setTimeout(() => {
-        if (document.body.contains(iframe)) document.body.removeChild(iframe);
-        setPrinting(false);
-      }, 1500);
-    };
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      let isFirst = true;
 
-    if (iframe.contentDocument?.readyState === "complete") {
-      setTimeout(doPrint, 600);
-    } else {
-      iframe.onload = () => setTimeout(doPrint, 600);
-      setTimeout(() => { if (document.body.contains(iframe)) { doPrint(); } }, 2500);
+      for (let i = 0; i < targets.length; i++) {
+        const target = targets[i];
+        setProgress(Math.round(((i) / targets.length) * 90));
+
+        // Make sure the element is visible for capture
+        const canvas = await html2canvas(target, {
+          scale: 2,                    // 2× for retina quality
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          // Expand to full height (no clipping)
+          height: target.scrollHeight,
+          windowHeight: target.scrollHeight,
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        const canvasW = canvas.width;
+        const canvasH = canvas.height;
+
+        // Scale image to fit within content width, preserving aspect ratio
+        const imgW_mm = CONTENT_W_MM;
+        const imgH_mm = (canvasH / canvasW) * imgW_mm;
+
+        // Paginate: if image is taller than one A4 page, split across pages
+        const pageContentH = A4_H_MM - MARGIN_MM * 2;
+        const totalPages = Math.ceil(imgH_mm / pageContentH);
+
+        for (let p = 0; p < totalPages; p++) {
+          if (!isFirst) pdf.addPage();
+          isFirst = false;
+
+          // Portion of the canvas to show on this page
+          const sliceTop_mm = p * pageContentH;
+          const sliceH_mm   = Math.min(pageContentH, imgH_mm - sliceTop_mm);
+
+          // Map mm back to canvas px
+          const px_per_mm = canvasW / imgW_mm;
+          const srcY  = Math.round(sliceTop_mm * px_per_mm);
+          const srcH  = Math.round(sliceH_mm   * px_per_mm);
+
+          // Create a cropped canvas for this slice
+          const slice = document.createElement("canvas");
+          slice.width  = canvasW;
+          slice.height = srcH;
+          const ctx = slice.getContext("2d")!;
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, slice.width, slice.height);
+          ctx.drawImage(canvas, 0, srcY, canvasW, srcH, 0, 0, canvasW, srcH);
+
+          const sliceData = slice.toDataURL("image/jpeg", 0.92);
+          pdf.addImage(sliceData, "JPEG", MARGIN_MM, MARGIN_MM, imgW_mm, sliceH_mm);
+        }
+      }
+
+      setProgress(100);
+
+      // Generate blob and trigger download directly — no print dialog
+      const pdfBlob = pdf.output("blob");
+      const fileName = file.name.replace(/\.docx?$/i, ".pdf");
+      triggerDownload(pdfBlob, fileName);
+
+    } catch (e) {
+      setError(
+        `Conversion failed: ${e instanceof Error ? e.message : "Unknown error"}. ` +
+        "Try a simpler document or one with fewer images."
+      );
+    } finally {
+      setConverting(false);
+      setProgress(0);
     }
   }, [file, rendered]);
 
   const reset = () => {
-    setFile(null); setRendered(false); setError(null);
+    setFile(null); setRendered(false); setError(null); setProgress(0);
     if (containerRef.current) containerRef.current.innerHTML = "";
   };
 
+  // ── UI ────────────────────────────────────────────────────────────────────
+
   return (
     <div className="w-full space-y-5">
-      {/* Drop zone — always visible until file is selected */}
+
+      {/* Drop zone */}
       {!file && (
         <label
           onDrop={handleDrop}
@@ -187,38 +234,35 @@ export default function DocxToPdf() {
             <p className="text-sm font-medium text-slate-700 truncate">{file.name}</p>
             <div className="flex items-center gap-2 mt-0.5">
               <p className="text-xs text-slate-400">{formatBytes(file.size)}</p>
-              {rendered && (
+              {rendered && !converting && (
                 <span className="flex items-center gap-1 text-xs font-medium text-emerald-600">
                   <CheckCircle2 className="w-3 h-3" />Preview ready
                 </span>
               )}
             </div>
           </div>
-          <button onClick={reset}
-            className="text-slate-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-slate-100 transition-colors flex-shrink-0"
-            title="Remove file">
+          <button onClick={reset} title="Remove"
+            className="text-slate-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-slate-100 transition-colors flex-shrink-0">
             <RotateCcw className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Preview button — shown before render */}
+      {/* Step 1 button: Preview */}
       {file && !rendered && !loading && !error && (
-        <button
-          onClick={handleRender}
+        <button onClick={handleRender}
           className="w-full flex items-center justify-center gap-2.5
                      py-4 rounded-2xl font-semibold text-white text-base
                      bg-gradient-to-r from-blue-700 to-blue-500
                      hover:from-blue-600 hover:to-blue-400
                      shadow-[0_4px_20px_rgba(59,130,246,0.35)]
-                     hover:-translate-y-0.5 transition-all duration-200"
-        >
+                     hover:-translate-y-0.5 transition-all duration-200">
           <Eye className="w-5 h-5" />
-          Preview Document
+          Step 1 — Preview Document
         </button>
       )}
 
-      {/* Loading */}
+      {/* Loading state */}
       {loading && (
         <div className="flex items-center justify-center py-8 gap-2.5 text-sm text-slate-500">
           <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
@@ -231,49 +275,55 @@ export default function DocxToPdf() {
         <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200 animate-fade-in">
           <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-red-700">Rendering failed</p>
-            <p className="text-xs text-red-600 mt-0.5">{error}</p>
-            <p className="text-xs text-red-500 mt-2">
-              Ensure the file is a valid .docx (Word 2007+) file. Older .doc (Word 97–2003) format is not supported.
-            </p>
-            <button onClick={handleRender}
-              className="mt-2 text-xs font-semibold text-red-600 underline hover:text-red-800 transition-colors">
-              Try again
-            </button>
+            <p className="text-sm font-semibold text-red-700">Error</p>
+            <p className="text-xs text-red-600 mt-0.5 leading-relaxed">{error}</p>
+            {!rendered && (
+              <button onClick={handleRender}
+                className="mt-2 text-xs font-semibold text-red-600 underline hover:text-red-800">
+                Try again
+              </button>
+            )}
           </div>
         </div>
       )}
 
-      {/* Info + Save button — shown after render */}
-      {rendered && (
-        <>
-          <div className="flex items-start gap-2.5 p-3 bg-amber-50 rounded-xl border border-amber-200">
-            <Eye className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-700 leading-relaxed">
-              Review the preview below, then click <strong>Save as PDF</strong>. In the browser print dialog, set destination to <strong>"Save as PDF"</strong> and margins to <strong>None</strong>.
-            </p>
-          </div>
-
-          <button
-            onClick={handleSaveAsPdf}
-            disabled={printing}
-            className="w-full flex items-center justify-center gap-2.5
-                       py-4 rounded-2xl font-semibold text-white text-base
-                       bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-600
-                       hover:from-slate-800 hover:via-indigo-600 hover:to-indigo-500
-                       disabled:opacity-60 disabled:cursor-not-allowed
-                       shadow-[0_4px_20px_rgba(79,70,229,0.4)]
-                       hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-          >
-            {printing
-              ? <><Loader2 className="w-5 h-5 animate-spin" />Opening print dialog…</>
-              : <><Download className="w-5 h-5" />Save as PDF</>
-            }
-          </button>
-        </>
+      {/* Step 2 button: Download PDF — real download, no print dialog */}
+      {rendered && !converting && (
+        <button onClick={handleDownloadPdf}
+          className="w-full flex items-center justify-center gap-2.5
+                     py-4 rounded-2xl font-semibold text-white text-base
+                     bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-600
+                     hover:from-slate-800 hover:via-indigo-600 hover:to-indigo-500
+                     shadow-[0_4px_20px_rgba(79,70,229,0.4)]
+                     hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+          <Download className="w-5 h-5" />
+          Step 2 — Download PDF
+        </button>
       )}
 
-      {/* Always-mounted preview container — ref never null after mount */}
+      {/* Conversion progress */}
+      {converting && (
+        <div className="space-y-3">
+          <div className="flex justify-between text-xs text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-500" />
+              Converting to PDF…
+            </span>
+            <span className="font-mono font-semibold text-indigo-600">{progress}%</span>
+          </div>
+          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <p className="text-xs text-slate-400 text-center">
+            Rendering pages to canvas — this may take a moment for long documents…
+          </p>
+        </div>
+      )}
+
+      {/* Always-mounted preview container */}
       <div
         className={`rounded-2xl overflow-hidden border border-slate-200 shadow-sm transition-all ${
           !file || (!rendered && !loading) ? "hidden" : ""
@@ -283,10 +333,10 @@ export default function DocxToPdf() {
           <div className="flex items-center gap-2.5 px-4 py-2.5 bg-slate-900">
             <Eye className="w-4 h-4 text-indigo-400" />
             <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
-              {loading ? "Rendering preview…" : "Document Preview"}
+              {loading ? "Rendering…" : "Document Preview — scroll to review"}
             </span>
             {rendered && (
-              <span className="ml-auto text-xs text-slate-500">Scroll to review before saving</span>
+              <span className="ml-auto text-xs text-slate-500">Review then click Download PDF above</span>
             )}
           </div>
         )}
