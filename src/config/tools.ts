@@ -1034,7 +1034,290 @@ export const imageTools: ToolConfig[] = [
   },
 ];
 
-export const allTools: ToolConfig[] = [...imageTools];
+export const pdfTools: ToolConfig[] = [
+  {
+    id: "merge-pdf",
+    category: "pdf",
+    slug: "/pdf/merge-pdf",
+    title: "Merge PDF – Combine PDF Files Online Free",
+    headline: "Merge PDF Files Online Free",
+    description:
+      "Merge multiple PDF files into one online for free. Drag to reorder pages before combining. No upload — runs entirely in your browser using pdf-lib.",
+    longDescription:
+      "Our free online PDF merger lets you combine multiple PDF files into a single document directly in your browser. Drag and drop to reorder files before merging. All pages from every PDF are preserved in the output. No file is ever uploaded to a server — pdf-lib processes everything locally. Merge up to 20 PDF files at once.",
+    actionVerb: "merge PDF files",
+    keywords: [
+      "merge pdf", "combine pdf", "merge pdf files online free",
+      "pdf merger", "combine pdf files", "join pdf online",
+      "pdf merge online free", "merge pdf online", "combine pdf online free",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "application/pdf",
+    outputExtension: "pdf",
+    maxFileSizeMB: 100,
+    maxBatchSize: 20,
+    searchVolume: 3000000,
+    relatedTools: ["split-pdf", "pdf-compressor", "rotate-pdf", "pdf-page-numbers"],
+    howToSteps: [
+      "Upload your PDF files by dropping them onto the tool.",
+      "Drag to reorder the files if needed.",
+      "Click 'Merge PDFs' and download your combined file.",
+    ],
+    faqs: [
+      { question: "How many PDFs can I merge at once?", answer: "Up to 20 PDF files simultaneously." },
+      { question: "Is the page order preserved?", answer: "Yes — pages appear in the order you arrange the files. Drag to reorder before merging." },
+      { question: "Are my files uploaded?", answer: "No. All merging happens locally in your browser using pdf-lib. Nothing is sent to any server." },
+      { question: "Is this free?", answer: "100% free. No account required." },
+      { question: "Is there a file size limit?", answer: "Up to 100MB per file." },
+    ],
+  },
+  {
+    id: "split-pdf",
+    category: "pdf",
+    slug: "/pdf/split-pdf",
+    title: "Split PDF – Split PDF Pages Online Free",
+    headline: "Split PDF Files Online Free",
+    description:
+      "Split a PDF into individual pages or custom page ranges online for free. No upload — runs in your browser. Free PDF splitter tool.",
+    longDescription:
+      "Our free PDF splitter lets you extract individual pages or custom page ranges from any PDF file directly in your browser. Choose to split every page into a separate file, extract a specific range (e.g., pages 3–7), or select individual pages to extract. No file is uploaded — pdf-lib handles everything locally.",
+    actionVerb: "split PDF files",
+    keywords: [
+      "split pdf", "split pdf online", "split pdf free", "pdf splitter",
+      "extract pages from pdf", "pdf page extractor", "split pdf into pages",
+      "separate pdf pages online free", "divide pdf",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "application/pdf",
+    outputExtension: "pdf",
+    maxFileSizeMB: 100,
+    maxBatchSize: 1,
+    searchVolume: 1200000,
+    relatedTools: ["merge-pdf", "pdf-compressor", "rotate-pdf", "pdf-to-jpg"],
+    howToSteps: [
+      "Upload a PDF file by dropping it onto the tool.",
+      "Choose a split mode: every page, a page range, or selected pages.",
+      "Click 'Split PDF' and download the resulting files as a ZIP.",
+    ],
+    faqs: [
+      { question: "Can I extract a specific range of pages?", answer: "Yes — enter a range like '2-5' or pick individual pages to extract." },
+      { question: "What happens to the original PDF?", answer: "Nothing — your original file is unchanged. The split creates new files." },
+      { question: "Are files uploaded?", answer: "No. Everything runs in your browser." },
+      { question: "Is this free?", answer: "100% free. No account required." },
+    ],
+  },
+  {
+    id: "pdf-compressor",
+    category: "pdf",
+    slug: "/pdf/pdf-compressor",
+    title: "PDF Compressor – Compress PDF Online Free",
+    headline: "Compress PDF Online Free — Reduce PDF File Size",
+    description:
+      "Compress PDF files online for free. Reduce PDF file size significantly without losing quality. No upload — runs in your browser. Free PDF compression tool.",
+    longDescription:
+      "Our free PDF compressor reduces PDF file size by removing redundant data, compressing embedded images, and stripping unnecessary metadata. No file is uploaded — compression runs locally in your browser using pdf-lib. Batch compress up to 10 PDF files at once.",
+    actionVerb: "compress PDF files",
+    keywords: [
+      "compress pdf", "pdf compressor", "reduce pdf size", "compress pdf online free",
+      "pdf size reducer", "pdf compressor online", "reduce pdf file size",
+      "shrink pdf online", "compress pdf without losing quality",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "application/pdf",
+    outputExtension: "pdf",
+    maxFileSizeMB: 100,
+    maxBatchSize: 10,
+    searchVolume: 2000000,
+    relatedTools: ["merge-pdf", "split-pdf", "rotate-pdf", "pdf-to-jpg"],
+    howToSteps: [
+      "Upload your PDF files by dropping them onto the compressor.",
+      "Select the compression level (screen, ebook, or print quality).",
+      "Click 'Compress PDF' and download your smaller files.",
+    ],
+    faqs: [
+      { question: "How much can you compress a PDF?", answer: "Typically 20–80% smaller depending on how many embedded images the PDF contains." },
+      { question: "Will text quality be affected?", answer: "No. Text is vector-based and is not affected by compression. Only embedded images are re-compressed." },
+      { question: "Are files uploaded?", answer: "No. Everything runs locally in your browser." },
+      { question: "Is this free?", answer: "100% free. No account or sign-up required." },
+    ],
+  },
+  {
+    id: "rotate-pdf",
+    category: "pdf",
+    slug: "/pdf/rotate-pdf",
+    title: "Rotate PDF – Rotate PDF Pages Online Free",
+    headline: "Rotate PDF Pages Online Free",
+    description:
+      "Rotate PDF pages online for free. Rotate all pages or individual pages by 90°, 180°, or 270°. No upload — works in your browser. Free PDF rotation tool.",
+    longDescription:
+      "Our free PDF page rotator lets you fix sideways or upside-down pages in any PDF file directly in your browser. Rotate all pages at once or select specific pages to rotate individually. Choose 90° clockwise, 90° counter-clockwise, or 180°. No file is uploaded — pdf-lib handles everything locally.",
+    actionVerb: "rotate PDF pages",
+    keywords: [
+      "rotate pdf", "rotate pdf online", "rotate pdf pages", "pdf rotator",
+      "rotate pdf free", "rotate pages in pdf", "turn pdf pages online",
+      "rotate pdf online free", "flip pdf pages",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "application/pdf",
+    outputExtension: "pdf",
+    maxFileSizeMB: 100,
+    maxBatchSize: 1,
+    searchVolume: 800000,
+    relatedTools: ["merge-pdf", "split-pdf", "pdf-compressor", "pdf-page-numbers"],
+    howToSteps: [
+      "Upload your PDF by dropping it onto the tool.",
+      "Choose which pages to rotate and the rotation direction.",
+      "Click 'Rotate PDF' and download your corrected file.",
+    ],
+    faqs: [
+      { question: "Can I rotate specific pages only?", answer: "Yes — select individual pages to rotate or rotate all pages at once." },
+      { question: "What rotation angles are supported?", answer: "90° clockwise, 90° counter-clockwise, and 180°." },
+      { question: "Are files uploaded?", answer: "No. Everything runs in your browser." },
+      { question: "Is this free?", answer: "100% free. No account required." },
+    ],
+  },
+  {
+    id: "pdf-to-jpg",
+    category: "pdf",
+    slug: "/pdf/pdf-to-jpg",
+    title: "PDF to JPG Converter – Free Online, No Upload",
+    headline: "Convert PDF to JPG Online Free",
+    description:
+      "Convert PDF pages to JPG images online for free. Each page becomes a separate JPG file. No upload — runs in your browser using PDF.js. Download as ZIP.",
+    longDescription:
+      "Our free PDF to JPG converter renders each page of your PDF as a high-quality JPG image directly in your browser using PDF.js. Each page is exported as a separate JPG file. Download all images as a ZIP archive. No file is uploaded to any server.",
+    actionVerb: "convert PDF to JPG",
+    keywords: [
+      "pdf to jpg", "pdf to jpg converter", "convert pdf to jpg", "pdf to image",
+      "pdf to jpg online free", "pdf pages to jpg", "export pdf as jpg",
+      "convert pdf to image online free", "pdf to jpeg",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "image/jpeg",
+    outputExtension: "jpg",
+    maxFileSizeMB: 50,
+    maxBatchSize: 1,
+    searchVolume: 1500000,
+    relatedTools: ["pdf-to-png", "merge-pdf", "split-pdf", "jpg-to-png"],
+    howToSteps: [
+      "Upload your PDF file by dropping it onto the tool.",
+      "Select the image quality (DPI) — higher DPI = sharper images but larger files.",
+      "Click 'Convert to JPG' and download all pages as a ZIP file.",
+    ],
+    faqs: [
+      { question: "Does each PDF page become a separate JPG?", answer: "Yes — each page is rendered as its own JPG image file." },
+      { question: "What DPI are the exported images?", answer: "Default is 150 DPI (good quality). You can increase to 300 DPI for print quality." },
+      { question: "Are files uploaded?", answer: "No. PDF.js renders pages entirely in your browser." },
+      { question: "Is this free?", answer: "100% free. No account needed." },
+    ],
+  },
+  {
+    id: "pdf-to-png",
+    category: "pdf",
+    slug: "/pdf/pdf-to-png",
+    title: "PDF to PNG Converter – Free Online, No Upload",
+    headline: "Convert PDF to PNG Online Free",
+    description:
+      "Convert PDF pages to PNG images online for free. Each page becomes a lossless PNG file. No upload — runs in your browser. Free PDF to PNG converter.",
+    longDescription:
+      "Our free PDF to PNG converter renders each page of your PDF as a lossless PNG image directly in your browser using PDF.js. PNG output preserves crisp text and is ideal for presentations, screenshots, and archiving. Download all pages as a ZIP. No file is uploaded.",
+    actionVerb: "convert PDF to PNG",
+    keywords: [
+      "pdf to png", "pdf to png converter", "convert pdf to png",
+      "pdf to png online free", "pdf pages to png", "export pdf as png",
+      "convert pdf to image online free",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "image/png",
+    outputExtension: "png",
+    maxFileSizeMB: 50,
+    maxBatchSize: 1,
+    searchVolume: 600000,
+    relatedTools: ["pdf-to-jpg", "merge-pdf", "split-pdf", "png-to-jpg"],
+    howToSteps: [
+      "Upload your PDF file onto the tool.",
+      "Select the DPI for the output images.",
+      "Click 'Convert to PNG' and download all pages as a ZIP.",
+    ],
+    faqs: [
+      { question: "Why choose PNG over JPG for PDF conversion?", answer: "PNG is lossless — text stays perfectly sharp and there are no compression artifacts, making it better for documents." },
+      { question: "Are files uploaded?", answer: "No. Everything runs in your browser using PDF.js." },
+      { question: "Is this free?", answer: "100% free." },
+    ],
+  },
+  {
+    id: "pdf-watermark",
+    category: "pdf",
+    slug: "/pdf/pdf-watermark",
+    title: "Add Watermark to PDF – Free Online Tool",
+    headline: "Add Watermark to PDF Online Free",
+    description:
+      "Add a text watermark to PDF pages online for free. Customize text, size, opacity, and position. No upload — runs in your browser with pdf-lib.",
+    longDescription:
+      "Our free PDF watermark tool lets you add a custom text watermark to every page of a PDF directly in your browser. Adjust the watermark text, font size, opacity, rotation angle, and position. Choose diagonal tile mode for full-page coverage. No file is uploaded — pdf-lib handles everything locally.",
+    actionVerb: "add watermark to PDF",
+    keywords: [
+      "pdf watermark", "add watermark to pdf", "watermark pdf online",
+      "pdf watermark free", "add text watermark to pdf",
+      "watermark pdf online free", "pdf stamp online",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "application/pdf",
+    outputExtension: "pdf",
+    maxFileSizeMB: 100,
+    maxBatchSize: 5,
+    searchVolume: 500000,
+    relatedTools: ["merge-pdf", "pdf-compressor", "rotate-pdf", "pdf-page-numbers"],
+    howToSteps: [
+      "Upload your PDF files onto the watermark tool.",
+      "Enter your watermark text and customize size, opacity, and rotation.",
+      "Click 'Apply Watermark' and download your watermarked PDFs.",
+    ],
+    faqs: [
+      { question: "Can I watermark multiple PDFs at once?", answer: "Yes, up to 5 PDFs at once with the same watermark settings." },
+      { question: "Can I make the watermark diagonal?", answer: "Yes — enable tile mode to repeat the watermark diagonally across every page." },
+      { question: "Are files uploaded?", answer: "No. All processing runs locally in your browser." },
+      { question: "Is this free?", answer: "100% free. No account required." },
+    ],
+  },
+  {
+    id: "pdf-page-numbers",
+    category: "pdf",
+    slug: "/pdf/pdf-page-numbers",
+    title: "Add Page Numbers to PDF – Free Online Tool",
+    headline: "Add Page Numbers to PDF Online Free",
+    description:
+      "Add page numbers to PDF files online for free. Choose position, font size, and starting number. No upload — runs in your browser with pdf-lib.",
+    longDescription:
+      "Our free PDF page numbering tool adds page numbers to every page of your PDF directly in your browser. Choose where to place the numbers (bottom center, bottom right, top center, etc.), customize the font size, and set the starting number. No file is uploaded — pdf-lib handles everything locally.",
+    actionVerb: "add page numbers to PDF",
+    keywords: [
+      "add page numbers to pdf", "pdf page numbers", "number pdf pages",
+      "add page numbers to pdf online free", "pdf page numbering",
+      "insert page numbers in pdf online",
+    ],
+    inputFormats: ["application/pdf"],
+    outputFormat: "application/pdf",
+    outputExtension: "pdf",
+    maxFileSizeMB: 100,
+    maxBatchSize: 5,
+    searchVolume: 400000,
+    relatedTools: ["merge-pdf", "pdf-watermark", "rotate-pdf", "pdf-compressor"],
+    howToSteps: [
+      "Upload your PDF file onto the tool.",
+      "Choose the position, font size, and starting page number.",
+      "Click 'Add Page Numbers' and download your numbered PDF.",
+    ],
+    faqs: [
+      { question: "Where can I place the page numbers?", answer: "Bottom center, bottom left, bottom right, top center, top left, or top right." },
+      { question: "Can I start numbering from a specific number?", answer: "Yes — set any starting number (useful for documents that are part of a larger set)." },
+      { question: "Are files uploaded?", answer: "No. Everything runs in your browser." },
+      { question: "Is this free?", answer: "100% free. No account required." },
+    ],
+  },
+];
+
+export const allTools: ToolConfig[] = [...imageTools, ...pdfTools];
 
 export function getToolById(id: string): ToolConfig | undefined {
   return allTools.find((t) => t.id === id);

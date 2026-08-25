@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown, Zap, ArrowRight,
-         RefreshCw, Minimize2, FileImage, Layers, Video } from "lucide-react";
+         RefreshCw, Minimize2, FileImage, Layers, Video,
+         FileText, Scissors, RotateCw, Hash } from "lucide-react";
 import Logo from "./Logo";
-import { imageTools } from "@/config/tools";
+import { imageTools, pdfTools } from "@/config/tools";
 
 // ── Categorise all image tools for the mega-menu ─────────────────────────────
 
@@ -46,7 +47,6 @@ const imageToolGroups = [
 ];
 
 const comingSoonGroups = [
-  { label: "PDF Tools",   icon: Layers,   count: 8  },
   { label: "Video Tools", icon: Video,   count: 6  },
 ];
 
@@ -54,6 +54,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen]   = useState(false);
   const [scrolled, setScrolled]       = useState(false);
   const [imgDropdown, setImgDropdown] = useState(false);
+  const [pdfDropdown, setPdfDropdown] = useState(false);
   const dropRef                       = useRef<HTMLDivElement>(null);
   const timeoutRef                    = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -201,8 +202,70 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* PDF Tools dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => { if (timeoutRef.current) clearTimeout(timeoutRef.current); setPdfDropdown(true); }}
+            onMouseLeave={() => { timeoutRef.current = setTimeout(() => setPdfDropdown(false), 120); }}
+          >
+            <button
+              onClick={() => setPdfDropdown(v => !v)}
+              className="flex items-center gap-1 px-3.5 py-2 rounded-xl text-sm font-medium
+                         text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all duration-150"
+            >
+              PDF Tools
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${pdfDropdown ? "rotate-180" : ""}`} />
+            </button>
+
+            {pdfDropdown && (
+              <div
+                className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[520px] animate-scale-in"
+                onMouseEnter={() => { if (timeoutRef.current) clearTimeout(timeoutRef.current); setPdfDropdown(true); }}
+                onMouseLeave={() => { timeoutRef.current = setTimeout(() => setPdfDropdown(false), 120); }}
+              >
+                <div className="bg-white rounded-2xl shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-3 bg-slate-900 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                      <span className="text-xs font-semibold text-slate-300 tracking-wide uppercase">{pdfTools.length} PDF Tools</span>
+                    </div>
+                    <Link href="/pdf" className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 font-medium transition-colors">
+                      View all <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-2 divide-x divide-slate-100">
+                    {[
+                      { heading: "Edit & Organise", icon: Scissors, color: "text-red-500", ids: ["merge-pdf","split-pdf","rotate-pdf","pdf-compressor"] },
+                      { heading: "Convert & Annotate", icon: FileText, color: "text-orange-500", ids: ["pdf-to-jpg","pdf-to-png","pdf-watermark","pdf-page-numbers"] },
+                    ].map(group => {
+                      const Icon = group.icon;
+                      const tools = pdfTools.filter(t => group.ids.includes(t.id));
+                      return (
+                        <div key={group.heading} className="py-4 px-4">
+                          <div className="flex items-center gap-1.5 mb-3">
+                            <Icon className={`w-3.5 h-3.5 ${group.color}`} />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{group.heading}</span>
+                          </div>
+                          <div className="space-y-0.5">
+                            {tools.map(tool => (
+                              <Link key={tool.id} href={tool.slug} onClick={() => setPdfDropdown(false)}
+                                className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-slate-600 hover:text-red-700 hover:bg-red-50/70 transition-all duration-150 group/item">
+                                <span className="w-1 h-1 rounded-full bg-slate-300 group-hover/item:bg-red-400 transition-colors flex-shrink-0" />
+                                <span className="font-medium truncate">{tool.title.split("–")[0].trim()}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Placeholder nav items */}
-          {["PDF Tools", "Video Tools"].map((label) => (
+          {["Video Tools"].map((label) => (
             <button
               key={label}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium
