@@ -219,7 +219,7 @@ export default function Navbar() {
 
             {pdfDropdown && (
               <div
-                className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[520px] animate-scale-in"
+                className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[680px] animate-scale-in"
                 onMouseEnter={() => { if (timeoutRef.current) clearTimeout(timeoutRef.current); setPdfDropdown(true); }}
                 onMouseLeave={() => { timeoutRef.current = setTimeout(() => setPdfDropdown(false), 120); }}
               >
@@ -233,10 +233,26 @@ export default function Navbar() {
                       View all <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>
-                  <div className="grid grid-cols-2 divide-x divide-slate-100">
+                  <div className="grid grid-cols-3 divide-x divide-slate-100">
                     {[
-                      { heading: "Edit & Organise", icon: Scissors, color: "text-red-500", ids: ["merge-pdf","split-pdf","rotate-pdf","pdf-compressor"] },
-                      { heading: "Convert & Annotate", icon: FileText, color: "text-orange-500", ids: ["pdf-to-jpg","pdf-to-png","pdf-watermark","pdf-page-numbers"] },
+                      {
+                        heading: "Edit & Organise",
+                        icon: Scissors,
+                        color: "text-red-500",
+                        ids: ["merge-pdf", "split-pdf", "rotate-pdf", "reorder-pdf", "pdf-compressor"],
+                      },
+                      {
+                        heading: "Convert",
+                        icon: FileText,
+                        color: "text-orange-500",
+                        ids: ["pdf-to-jpg", "pdf-to-png", "image-to-pdf", "pdf-to-text", "extract-images-pdf"],
+                      },
+                      {
+                        heading: "Annotate & Info",
+                        icon: Hash,
+                        color: "text-amber-500",
+                        ids: ["pdf-watermark", "pdf-page-numbers", "pdf-metadata"],
+                      },
                     ].map(group => {
                       const Icon = group.icon;
                       const tools = pdfTools.filter(t => group.ids.includes(t.id));

@@ -492,3 +492,253 @@ export async function renderPdfThumbnails(
   }
   return thumbs;
 }
+
+// ─── Images → PDF ─────────────────────────────────────────────────────────────
+
+export type PdfPageSize = "a4" | "letter" | "fit";
+export type PdfOrientation = "portrait" | "landscape";
+
+export interface ImageToPdfOptions {
+  pageSize: PdfPageSize;
+  orientation: PdfOrientation;
+}
+
+// Standard page sizes in PDF points (1pt = 1/72 inch)
+const PAGE_SIZES = {
+  a4:     [595.28, 841.89] as [number, number],
+  letter: [612,    792   ] as [number, number],
+};
+
+export async function imagesToPdf(
+  files: File[],
+  opts: ImageToPdfOptions
+): Promise<PdfResult> {
+  const doc = await PDFDocument.create();
+  let totalOriginal = 0;
+
+  for (const file of files) {
+    totalOriginal += file.size;
+    const buf = await fileToArrayBuffer(file);
+    const bytes = new Uint8Array(buf);
+
+    let img: import("pdf-lib").PDFImage;
+    if (file.type === "image/png") {
+      img = await doc.embedPng(bytes);
+    } else {
+      // jpeg/webp — convert webp to jpeg via canvas first
+      if (file.type === "image/webp") {
+        const blob = await convertImageToJpeg(file);
+        img = await doc.embedJpg(new Uint8Array(await blob.arrayBuffer()));
+      } else {
+        img = await doc.embedJpg(bytes);
+      }
+    }
+
+    const { width: imgW, height: imgH } = img;
+
+    let pageW: number, pageH: number;
+
+    if (opts.pageSize === "fit") {
+      pageW = imgW;
+      pageH = imgH;
+    } else {
+      [pageW, pageH] = PAGE_SIZES[opts.pageSize];
+      if (opts.orientation === "landscape") [pageW, pageH] = [pageH, pageW];
+    }
+
+    const page = doc.addPage([pageW, pageH]);
+
+    // Scale image to fit page with margins
+    const margin = opts.pageSize === "fit" ? 0 : 20;
+    const maxW = pageW - margin * 2;
+    const maxH = pageH - margin * 2;
+    const scale = Math.min(maxW / imgW, maxH / imgH, 1);
+    const drawW = imgW * scale;
+    const drawH = imgH * scale;
+    const x = (pageW - drawW) / 2;
+    const y = (pageH - drawH) / 2;
+
+    page.drawImage(img, { x, y, width: drawW, height: drawH });
+  }
+
+  const outBytes = await doc.save();
+  return pdfBlobResult(
+    outBytes as unknown as Uint8Array,
+    "images.pdf",
+    totalOriginal,
+    files.length
+  );
+}
+
+// Helper: convert any image to JPEG via Canvas (for WebP support in pdf-lib)
+async function convertImageToJpeg(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d")!;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error("Canvas failed")), "image/jpeg", 0.92);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Failed to load image")); };
+    img.src = url;
+  });
+}
+
+// ─── PDF → Text ───────────────────────────────────────────────────────────────
+
+export interface PdfTextResult {
+  text: string;
+  pageTexts: string[];
+  pageCount: number;
+  fileName: string;
+}
+
+export async function pdfToText(
+  file: File,
+  onProgress?: (done: number, total: number) => void
+): Promise<PdfTextResult> {
+  const pdfjsLib = await import("pdfjs-dist");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
+
+  const buf = await fileToArrayBuffer(file);
+  const pdfDoc = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+  const total = pdfDoc.numPages;
+  const pageTexts: string[] = [];
+
+  for (let i = 1; i <= total; i++) {
+    const page = await pdfDoc.getPage(i);
+    const content = await page.getTextContent();
+    // Reconstruct reading order: join items by space, new paragraph on Y-position jumps
+    let pageText = "";
+    let lastY: number | null = null;
+    for (const item of content.items) {
+      if ("str" in item) {
+        const t = item as { str: string; transform: number[] };
+        const y = t.transform[5];
+        if (lastY !== null && Math.abs(y - lastY) > 5) {
+          pageText += "\n";
+        }
+        pageText += t.str;
+        lastY = y;
+      }
+    }
+    pageTexts.push(pageText.trim());
+    onProgress?.(i, total);
+  }
+
+  return {
+    text: pageTexts.join("\n\n--- Page Break ---\n\n"),
+    pageTexts,
+    pageCount: total,
+    fileName: file.name,
+  };
+}
+
+// ─── Reorder PDF Pages ────────────────────────────────────────────────────────
+
+/**
+ * Reorders (and optionally deletes) pages in a PDF.
+ * @param newOrder 1-indexed page numbers in the desired output order.
+ *                 Pages not in this array are deleted.
+ */
+export async function reorderPdfPages(file: File, newOrder: number[]): Promise<PdfResult> {
+  const buf = await fileToArrayBuffer(file);
+  const src = await PDFDocument.load(buf, { ignoreEncryption: true });
+  const dst = await PDFDocument.create();
+
+  const zeroIndexed = newOrder.map(p => p - 1);
+  const copied = await dst.copyPages(src, zeroIndexed);
+  copied.forEach(p => dst.addPage(p));
+
+  const bytes = await dst.save();
+  const baseName = file.name.replace(/\.pdf$/i, "");
+  return pdfBlobResult(bytes as unknown as Uint8Array, `${baseName}-reordered.pdf`, file.size, copied.length);
+}
+
+// ─── PDF Metadata Editor ──────────────────────────────────────────────────────
+
+export interface PdfMetadata {
+  title: string;
+  author: string;
+  subject: string;
+  keywords: string;
+  creator: string;
+  producer: string;
+}
+
+export async function readPdfMetadata(file: File): Promise<PdfMetadata> {
+  const buf = await fileToArrayBuffer(file);
+  const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
+  return {
+    title:    doc.getTitle()    ?? "",
+    author:   doc.getAuthor()   ?? "",
+    subject:  doc.getSubject()  ?? "",
+    keywords: (() => { const k = doc.getKeywords(); return Array.isArray(k) ? k.join(", ") : k ?? ""; })(),
+    creator:  doc.getCreator()  ?? "",
+    producer: doc.getProducer() ?? "",
+  };
+}
+
+export async function writePdfMetadata(file: File, meta: PdfMetadata): Promise<PdfResult> {
+  const buf = await fileToArrayBuffer(file);
+  const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
+
+  doc.setTitle(meta.title);
+  doc.setAuthor(meta.author);
+  doc.setSubject(meta.subject);
+  doc.setKeywords(meta.keywords.split(",").map(k => k.trim()).filter(Boolean));
+  doc.setCreator(meta.creator);
+  doc.setProducer(meta.producer);
+
+  const bytes = await doc.save();
+  const baseName = file.name.replace(/\.pdf$/i, "");
+  return pdfBlobResult(bytes as unknown as Uint8Array, `${baseName}-metadata.pdf`, file.size, doc.getPageCount());
+}
+
+// ─── Extract Images from PDF ──────────────────────────────────────────────────
+
+export interface ExtractedPdfImage {
+  blob: Blob;
+  fileName: string;
+  pageNumber: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Extracts page renderings from a PDF as images (JPG or PNG).
+ * Uses the same pdfToImages pipeline under the hood — renders each page
+ * to canvas and exports as image. This is the most reliable browser approach.
+ */
+export async function extractImagesFromPdf(
+  file: File,
+  selectedPages: number[],   // 1-indexed; empty = all pages
+  format: "image/jpeg" | "image/png" = "image/jpeg",
+  scale = 2,
+  onProgress?: (done: number, total: number) => void
+): Promise<ExtractedPdfImage[]> {
+  const pages = await pdfToImages(
+    file,
+    { format, scale, quality: 0.92 },
+    (done, total) => onProgress?.(done, total)
+  );
+
+  const filtered = selectedPages.length > 0
+    ? pages.filter(p => selectedPages.includes(p.pageNumber))
+    : pages;
+
+  return filtered.map(p => ({
+    blob: p.blob,
+    fileName: p.fileName,
+    pageNumber: p.pageNumber,
+    width: p.width,
+    height: p.height,
+  }));
+}
