@@ -143,15 +143,28 @@ function OverlayCanvas({
         }
 
         case "watermark": {
-          const fsPx = Math.max(6, Math.round((overlay.fontSize / 100) * cW * 2.5));
+          // Match exactly how watermarkPdf() draws text in pdf-lib:
+          // pdf-lib uses fontSize in PDF points (1pt ≈ 1/72 inch).
+          // A4 page = 595×842 pts. Thumbnail canvas ≈ 130×184 px.
+          // Scale = canvasWidth / pdfPageWidth ≈ canvasWidth / 595
+          // But we don't know the original PDF page size — we approximate
+          // by treating canvas as proportional to a standard A4 page.
+          // The key insight: font size should LOOK the same proportionally.
+          // watermarkPdf uses fontSize pts on a ~595pt-wide page.
+          // On a cW-wide canvas, scale = cW / 595.
+          const pdfScale = cW / 595;
+          const fsPx = Math.max(4, overlay.fontSize * pdfScale);
           ctx.globalAlpha = overlay.opacity;
           ctx.fillStyle = overlay.color;
           ctx.font = `bold ${fsPx}px Arial, sans-serif`;
-          ctx.textBaseline = "middle";
+          ctx.textBaseline = "alphabetic";
           const tw = ctx.measureText(overlay.text).width;
+
           if (overlay.tile) {
-            const stepX = tw + fsPx * 3;
-            const stepY = fsPx * 4;
+            // stepX = textWidth_in_pdf_pts + fontSize * 4, scaled to canvas
+            const stepX = tw + fsPx * 4;
+            const stepY = fsPx * 5;
+            ctx.save();
             for (let y = 0; y < cH + stepY; y += stepY) {
               for (let x = -tw; x < cW + tw; x += stepX) {
                 ctx.save();
@@ -161,9 +174,14 @@ function OverlayCanvas({
                 ctx.restore();
               }
             }
+            ctx.restore();
           } else {
+            // Center watermark: pdf-lib places at (width-textWidth)/2, height/2
+            // PDF y-axis is bottom-up; canvas is top-down, so map height/2 → cH/2
             ctx.save();
-            ctx.translate(cW / 2, cH / 2);
+            const cx2 = (cW - tw) / 2;
+            const cy2 = cH / 2;
+            ctx.translate(cx2 + tw / 2, cy2);
             ctx.rotate((overlay.angle * Math.PI) / 180);
             ctx.fillText(overlay.text, -tw / 2, 0);
             ctx.restore();

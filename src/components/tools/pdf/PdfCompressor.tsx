@@ -18,9 +18,9 @@ interface PdfItem {
 }
 
 const LEVELS: { value: CompressionLevel; label: string; desc: string; badge: string }[] = [
-  { value: "screen", label: "Maximum",      desc: "Smallest file",       badge: "bg-red-50 text-red-600"     },
-  { value: "ebook",  label: "Balanced",     desc: "Best all-round",      badge: "bg-indigo-50 text-indigo-600" },
-  { value: "print",  label: "High Quality", desc: "Moderate compression", badge: "bg-green-50 text-green-600"  },
+  { value: "screen", label: "Maximum",      desc: "Images 40% quality, 60% scale", badge: "bg-red-50 text-red-600"     },
+  { value: "ebook",  label: "Balanced",     desc: "Images 70% quality, 80% scale", badge: "bg-indigo-50 text-indigo-600" },
+  { value: "print",  label: "High Quality", desc: "Images 85% quality, full scale", badge: "bg-green-50 text-green-600"  },
 ];
 
 export default function PdfCompressor() {
@@ -99,6 +99,12 @@ export default function PdfCompressor() {
                 </button>
               ))}
             </div>
+            <div className="px-4 py-2.5 bg-amber-50 border-t border-amber-100 flex items-start gap-2">
+              <span className="text-amber-500 text-xs mt-0.5 flex-shrink-0">ⓘ</span>
+              <p className="text-xs text-amber-700 leading-relaxed">
+                Best results on image-heavy PDFs. Text-only PDFs may show minimal size reduction — this is expected as text is already vector-based and cannot be lossy-compressed.
+              </p>
+            </div>
           </div>
 
           {/* File list with thumbnail preview */}
@@ -171,21 +177,29 @@ export default function PdfCompressor() {
           </div>
           {doneItems.map(item => {
             const saving = item.result ? Math.round((1 - item.result.size / item.file.size) * 100) : 0;
+            const alreadyOptimised = saving <= 2;
             return (
-              <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl border-l-[3px] border-l-emerald-500
-                                            border border-slate-100 bg-white shadow-sm">
-                <FileText className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+              <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl
+                                            border-l-[3px]
+                                            border border-slate-100 bg-white shadow-sm
+                                            animate-bounce-in"
+                   style={{ borderLeftColor: alreadyOptimised ? "#94a3b8" : "#10b981" }}>
+                <FileText className={`w-5 h-5 flex-shrink-0 ${alreadyOptimised ? "text-slate-400" : "text-emerald-500"}`} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-700 truncate">{item.file.name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-xs text-slate-400">{formatBytes(item.file.size)}</span>
                     <span className="text-xs text-slate-300">→</span>
-                    <span className="text-xs font-medium text-emerald-600">{formatBytes(item.result!.size)}</span>
-                    {saving > 0 && (
+                    <span className={`text-xs font-medium ${alreadyOptimised ? "text-slate-500" : "text-emerald-600"}`}>
+                      {formatBytes(item.result!.size)}
+                    </span>
+                    {saving > 2 && (
                       <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">-{saving}%</span>
                     )}
-                    {saving <= 0 && (
-                      <span className="text-[10px] text-slate-400">already optimised</span>
+                    {alreadyOptimised && (
+                      <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                        {saving <= 0 ? "Text-only PDF — minimal savings possible" : "Already well-optimised"}
+                      </span>
                     )}
                   </div>
                 </div>

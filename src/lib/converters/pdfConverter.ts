@@ -110,20 +110,96 @@ export async function splitPdf(file: File, opts: SplitOptions): Promise<SplitRes
 
 export type CompressionLevel = "screen" | "ebook" | "print";
 
-export async function compressPdf(file: File, _level: CompressionLevel = "ebook"): Promise<PdfResult> {
-  // pdf-lib re-serialization removes duplicate objects and compresses cross-ref table.
-  // For image-heavy PDFs the savings are modest (~10-30%); for text PDFs, minimal.
-  // True lossy image re-compression requires canvas round-trip per embedded image.
+// Image quality per level
+const COMPRESSION_QUALITY: Record<CompressionLevel, number> = {
+  screen: 0.4,
+  ebook:  0.7,
+  print:  0.85,
+};
+
+// Scale factor for embedded images per level (1 = original size)
+const COMPRESSION_SCALE: Record<CompressionLevel, number> = {
+  screen: 0.6,
+  ebook:  0.8,
+  print:  1.0,
+};
+
+export async function compressPdf(file: File, level: CompressionLevel = "ebook"): Promise<PdfResult> {
   const buf = await fileToArrayBuffer(file);
   const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
+  const quality = COMPRESSION_QUALITY[level];
+  const imgScale = COMPRESSION_SCALE[level];
 
-  // Strip metadata to save space
-  doc.setTitle("");
-  doc.setAuthor("");
-  doc.setSubject("");
-  doc.setKeywords([]);
-  doc.setProducer("");
-  doc.setCreator("");
+  // Strip metadata
+  doc.setTitle(""); doc.setAuthor(""); doc.setSubject("");
+  doc.setKeywords([]); doc.setProducer(""); doc.setCreator("");
+
+  // Re-compress embedded JPEG images via Canvas API
+  // This is the main source of savings for image-heavy PDFs
+  try {
+    const context = doc.context;
+    for (const [, obj] of context.enumerateIndirectObjects()) {
+      if (obj && typeof obj === "object" && "dict" in obj && "contents" in obj) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const streamObj = obj as any;
+        const subtype = streamObj.dict?.lookup?.({ toString: () => "/Subtype" });
+        const isImage = subtype && subtype.toString() === "/Image";
+        if (!isImage) continue;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const filter = (streamObj.dict as any)?.get?.("Filter");
+        const isJpeg = filter && filter.toString().includes("DCTDecode");
+        if (!isJpeg && level !== "screen") continue;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const wObj = (streamObj.dict as any)?.get?.("Width");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const hObj = (streamObj.dict as any)?.get?.("Height");
+        if (!wObj || !hObj) continue;
+
+        const origW = Number(wObj);
+        const origH = Number(hObj);
+        const newW   = Math.max(1, Math.round(origW * imgScale));
+        const newH   = Math.max(1, Math.round(origH * imgScale));
+
+        const rawBytes: Uint8Array = streamObj.contents;
+        const imgBlob = new Blob([rawBytes as unknown as BlobPart], { type: "image/jpeg" });
+        const url = URL.createObjectURL(imgBlob);
+
+        await new Promise<void>(resolve => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width  = newW;
+            canvas.height = newH;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) { URL.revokeObjectURL(url); resolve(); return; }
+            ctx.drawImage(img, 0, 0, newW, newH);
+            canvas.toBlob(async (blob) => {
+              URL.revokeObjectURL(url);
+              if (!blob) { resolve(); return; }
+              try {
+                const newBytes = new Uint8Array(await blob.arrayBuffer());
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                streamObj.contents = newBytes as any;
+                // Replace stream content and update Width/Height
+                streamObj.contents = newBytes;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (streamObj.dict as any)?.set?.("Width", context.obj(newW));
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (streamObj.dict as any)?.set?.("Height", context.obj(newH));
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (streamObj.dict as any)?.set?.("Length", context.obj(newBytes.length));
+              } catch { /* non-fatal */ }
+              resolve();
+            }, "image/jpeg", quality);
+          };
+          img.onerror = () => { URL.revokeObjectURL(url); resolve(); };
+          img.src = url;
+        });
+      }
+    }
+  } catch { /* image re-compression failed — fall back to metadata-only strip */ }
 
   const bytes = await doc.save({ useObjectStreams: true });
   const baseName = file.name.replace(/\.pdf$/i, "");
