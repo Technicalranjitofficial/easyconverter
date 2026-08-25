@@ -21,6 +21,7 @@ export const DynamicPdfImageToPdf    = dynamic(() => import("./PdfImageToPdf"), 
 export const DynamicPdfToText        = dynamic(() => import("./PdfToText"),        { ssr: false, loading: PdfSkeleton });
 export const DynamicPdfMetadata      = dynamic(() => import("./PdfMetadata"),      { ssr: false, loading: PdfSkeleton });
 export const DynamicPdfExtractImages = dynamic(() => import("./PdfExtractImages"), { ssr: false, loading: PdfSkeleton });
+export const DynamicDocxToPdf        = dynamic(() => import("./DocxToPdf"),        { ssr: false, loading: PdfSkeleton });
 
 export const DynamicPdfToJpg = dynamic<ComponentProps<typeof PdfToImages>>(
   () => import("./PdfToImages"), { ssr: false, loading: PdfSkeleton }

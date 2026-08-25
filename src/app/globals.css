@@ -281,3 +281,17 @@ body {
 .prose-legal strong {
   @apply font-semibold text-slate-800;
 }
+
+/* ─── docx-preview styles ─────────────────────────────────── */
+/* Scoped to the docx preview container so it doesn't leak     */
+.docx-preview-wrapper .docx-wrapper {
+  background: #e5e7eb !important; /* slate-200 matches our bg-slate-100 container */
+  padding: 16px !important;
+}
+.docx-preview-wrapper .docx {
+  width: 100% !important;
+  max-width: 794px; /* A4 width in px at 96dpi */
+  margin: 0 auto !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12) !important;
+  border-radius: 4px !important;
+}

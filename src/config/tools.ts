@@ -1491,6 +1491,45 @@ export const pdfTools: ToolConfig[] = [
       { question: "Is this free?", answer: "100% free. No account required." },
     ],
   },
+  {
+    id: "docx-to-pdf",
+    category: "pdf",
+    slug: "/pdf/docx-to-pdf",
+    title: "Word to PDF Converter – Free Online, No Upload",
+    headline: "Convert Word to PDF Online Free",
+    description:
+      "Convert DOCX Word documents to PDF online for free. Preview your document before converting. No upload — runs entirely in your browser using docx-preview.",
+    longDescription:
+      "Our free Word to PDF converter renders your DOCX file as a live preview in your browser using docx-preview, then exports it to PDF. Preview the rendered document before saving. Supports text formatting, images, tables, and lists. No file is ever uploaded — everything runs locally using docx-preview and the browser's built-in print API.",
+    actionVerb: "convert Word to PDF",
+    keywords: [
+      "word to pdf", "docx to pdf", "convert word to pdf",
+      "word to pdf converter", "docx to pdf online free",
+      "convert docx to pdf online", "word document to pdf",
+      "doc to pdf converter online free",
+    ],
+    inputFormats: [
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/msword",
+    ],
+    outputFormat: "application/pdf",
+    outputExtension: "pdf",
+    maxFileSizeMB: 20,
+    maxBatchSize: 1,
+    searchVolume: 3500000,
+    relatedTools: ["merge-pdf", "pdf-compressor", "image-to-pdf", "split-pdf"],
+    howToSteps: [
+      "Upload your Word (.docx) file by dropping it onto the tool.",
+      "Preview the rendered document — check it looks correct.",
+      "Click 'Save as PDF' and your browser saves the document as a PDF.",
+    ],
+    faqs: [
+      { question: "Will my formatting be preserved?", answer: "Most formatting is preserved — text styles, bold/italic, images, tables, and lists. Very complex layouts (e.g. multi-column, custom fonts, tracked changes) may appear slightly different." },
+      { question: "Is my file uploaded?", answer: "No. docx-preview renders your file 100% in the browser. Nothing is sent to any server." },
+      { question: "What file formats are supported?", answer: "DOCX (.docx) files from Microsoft Word, Google Docs exports, and LibreOffice." },
+      { question: "Is this free?", answer: "100% free. No account required." },
+    ],
+  },
 ];
 
 export const allTools: ToolConfig[] = [...imageTools, ...pdfTools];

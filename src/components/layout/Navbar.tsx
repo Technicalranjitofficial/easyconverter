@@ -245,7 +245,7 @@ export default function Navbar() {
                         heading: "Convert",
                         icon: FileText,
                         color: "text-orange-500",
-                        ids: ["pdf-to-jpg", "pdf-to-png", "image-to-pdf", "pdf-to-text", "extract-images-pdf"],
+                        ids: ["pdf-to-jpg", "pdf-to-png", "image-to-pdf", "docx-to-pdf", "pdf-to-text", "extract-images-pdf"],
                       },
                       {
                         heading: "Annotate & Info",
