@@ -1,27 +1,41 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Loader2, RotateCw, RotateCcw, RefreshCw, Download, FileText } from "lucide-react";
 import PdfDropZone from "./PdfDropZone";
-import PdfPagePreview from "./PdfPagePreview";
+import PdfPagePreview, { type PdfPageConfig } from "./PdfPagePreview";
 import { rotatePdf, type RotationAngle } from "@/lib/converters/pdfConverter";
 import { formatBytes } from "@/lib/utils/fileUtils";
 import { triggerDownload } from "@/lib/utils/downloadUtils";
 import type { PdfPageThumb } from "@/lib/converters/pdfConverter";
 
 export default function PdfRotate() {
-  const [file, setFile]       = useState<File | null>(null);
-  const [thumbs, setThumbs]   = useState<PdfPageThumb[]>([]);
-  const [angle, setAngle]     = useState<RotationAngle>(90);
-  const [selMode, setSelMode] = useState<"all" | "select">("all");
+  const [file, setFile]         = useState<File | null>(null);
+  const [thumbs, setThumbs]     = useState<PdfPageThumb[]>([]);
+  const [angle, setAngle]       = useState<RotationAngle>(90);
+  const [selMode, setSelMode]   = useState<"all" | "select">("all");
   const [selected, setSelected] = useState<Set<number>>(new Set());
-  const [loading, setLoading] = useState(false);
-  const [result, setResult]   = useState<{ blob: Blob; size: number } | null>(null);
+  const [loading, setLoading]   = useState(false);
+  const [result, setResult]     = useState<{ blob: Blob; size: number } | null>(null);
 
   const handleFile = useCallback((files: File[]) => {
     const f = files[0]; if (!f) return;
     setFile(f); setResult(null); setSelected(new Set()); setThumbs([]);
   }, []);
+
+  // ── Each thumbnail shows the rotation result in real time ────────────────
+  const pageConfigs = useMemo<PdfPageConfig[]>(() => {
+    if (!thumbs.length) return [];
+    return thumbs.map(t => {
+      const willRotate = selMode === "all" || selected.has(t.pageNumber);
+      return {
+        pageNumber: t.pageNumber,
+        overlay: willRotate
+          ? { type: "rotate" as const, angle }
+          : { type: "none" as const },
+      };
+    });
+  }, [thumbs, selMode, selected, angle]);
 
   const handleRotate = async () => {
     if (!file) return;
@@ -50,7 +64,6 @@ export default function PdfRotate() {
 
       {file && !result && (
         <>
-          {/* File badge */}
           <div className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-white">
             <div className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
               <FileText className="w-4 h-4 text-red-500" />
@@ -61,86 +74,77 @@ export default function PdfRotate() {
             </div>
           </div>
 
-          {/* Page thumbnail grid — always shown */}
+          {/* Live rotation preview — thumbnails actually rotate as you change the angle */}
           <PdfPagePreview
             file={file}
+            pageConfigs={pageConfigs}
             selectionMode={selMode === "select" ? "checkbox" : "none"}
             selectedPages={selected}
-            onSelectionChange={setSelected}
+            onSelectionChange={pages => { setSelected(pages); setSelMode("select"); }}
             showLabel
             onLoaded={t => setThumbs(t)}
           />
 
-          {/* Settings */}
           {thumbs.length > 0 && (
-            <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-              <div className="px-4 py-2.5 bg-slate-900 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-                <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Rotation Settings</span>
-              </div>
-              <div className="p-4 bg-white space-y-4">
-                {/* Angle buttons */}
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Angle</p>
-                  <div className="flex gap-2">
-                    {ANGLES.map(a => (
-                      <button key={a.value} onClick={() => setAngle(a.value)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
-                          angle === a.value ? "border-indigo-400 bg-indigo-600 text-white" : "border-slate-200 text-slate-600 hover:border-slate-300"
-                        }`}>
-                        {a.icon}{a.label}
-                      </button>
-                    ))}
+            <>
+              <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                <div className="px-4 py-2.5 bg-slate-900 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                  <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Rotation</span>
+                  <span className="ml-auto text-xs text-indigo-300">
+                    Thumbnails show the actual result ↑
+                  </span>
+                </div>
+                <div className="p-4 bg-white space-y-4">
+                  {/* Angle */}
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Angle</p>
+                    <div className="flex gap-2">
+                      {ANGLES.map(a => (
+                        <button key={a.value} onClick={() => setAngle(a.value)}
+                          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
+                            angle === a.value ? "border-indigo-400 bg-indigo-600 text-white" : "border-slate-200 text-slate-600 hover:border-slate-300"
+                          }`}>
+                          {a.icon}{a.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Scope */}
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Apply To</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {([["all", "All pages"], ["select", "Selected pages"]] as const).map(([v, l]) => (
+                        <button key={v} onClick={() => setSelMode(v as "all" | "select")}
+                          className={`py-2.5 rounded-xl border text-sm font-semibold transition-all ${
+                            selMode === v ? "border-indigo-400 bg-indigo-50 text-indigo-700" : "border-slate-200 text-slate-600 hover:border-slate-300"
+                          }`}>{l}</button>
+                      ))}
+                    </div>
+                    {selMode === "select" && (
+                      <p className="text-xs text-slate-400 mt-2">
+                        {selected.size > 0 ? `${selected.size} page${selected.size !== 1 ? "s" : ""} selected — click thumbnails to change` : "Click thumbnails above to select pages."}
+                      </p>
+                    )}
                   </div>
                 </div>
-
-                {/* Which pages */}
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Apply To</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { v: "all" as const, label: "All pages" },
-                      { v: "select" as const, label: "Selected pages" },
-                    ].map(m => (
-                      <button key={m.v} onClick={() => setSelMode(m.v)}
-                        className={`py-2.5 rounded-xl border text-sm font-semibold transition-all ${
-                          selMode === m.v ? "border-indigo-400 bg-indigo-50 text-indigo-700" : "border-slate-200 text-slate-600 hover:border-slate-300"
-                        }`}>
-                        {m.label}
-                      </button>
-                    ))}
-                  </div>
-                  {selMode === "select" && (
-                    <p className="text-xs text-slate-400 mt-2">
-                      {selected.size > 0
-                        ? `${selected.size} page${selected.size !== 1 ? "s" : ""} selected — click thumbnails above to change`
-                        : "Click thumbnails above to select pages to rotate."}
-                    </p>
-                  )}
-                </div>
               </div>
-            </div>
-          )}
 
-          {thumbs.length > 0 && (
-            <button
-              onClick={handleRotate}
-              disabled={loading || rotateCount === 0}
-              className="w-full flex items-center justify-center gap-2.5
-                         py-4 rounded-2xl font-semibold text-white text-base
-                         bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-600
-                         hover:from-slate-800 hover:via-indigo-600 hover:to-indigo-500
-                         disabled:opacity-60 disabled:cursor-not-allowed
-                         shadow-[0_4px_20px_rgba(79,70,229,0.4)]
-                         hover:-translate-y-0.5 transition-all duration-200"
-            >
-              {loading
-                ? <><Loader2 className="w-5 h-5 animate-spin" />Rotating…</>
-                : <><RotateCw className="w-5 h-5" />
-                    Rotate {rotateCount > 0 ? `${rotateCount} page${rotateCount !== 1 ? "s" : ""} ` : ""}by {angle}°
-                  </>
-              }
-            </button>
+              <button onClick={handleRotate} disabled={loading || rotateCount === 0}
+                className="w-full flex items-center justify-center gap-2.5
+                           py-4 rounded-2xl font-semibold text-white text-base
+                           bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-600
+                           hover:from-slate-800 hover:via-indigo-600 hover:to-indigo-500
+                           disabled:opacity-60 shadow-[0_4px_20px_rgba(79,70,229,0.4)]
+                           hover:-translate-y-0.5 transition-all duration-200">
+                {loading
+                  ? <><Loader2 className="w-5 h-5 animate-spin" />Rotating…</>
+                  : <><RotateCw className="w-5 h-5" />
+                      Rotate {rotateCount > 0 ? `${rotateCount} page${rotateCount !== 1 ? "s" : ""} ` : ""}by {angle}°
+                    </>
+                }
+              </button>
+            </>
           )}
         </>
       )}
