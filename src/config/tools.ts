@@ -748,6 +748,290 @@ export const imageTools: ToolConfig[] = [
       },
     ],
   },
+  // ─── Utility tools ─────────────────────────────────────────────────────────
+  {
+    id: "image-to-base64",
+    category: "image",
+    slug: "/image/image-to-base64",
+    title: "Image to Base64 Converter – Free Online",
+    headline: "Convert Image to Base64 Online Free",
+    description:
+      "Convert images to Base64 encoded strings online for free. Instantly encode JPG, PNG, WebP, GIF, SVG to Base64 — copy the data URI or raw string. No upload needed.",
+    longDescription:
+      "Our free image to Base64 converter encodes any image file into a Base64 string directly in your browser. Base64 encoding is useful for embedding images directly in HTML, CSS, or JSON without a separate file request. Copy the raw Base64 string or the full data URI (data:image/png;base64,...) and paste it anywhere. No file is ever uploaded — encoding happens 100% locally.",
+    actionVerb: "convert image to Base64",
+    keywords: [
+      "image to base64",
+      "image to base64 converter",
+      "convert image to base64",
+      "base64 encode image",
+      "image base64 encoder",
+      "jpg to base64",
+      "png to base64",
+      "base64 image online",
+      "encode image base64 online free",
+      "image to base64 string",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"],
+    outputFormat: "text/plain",
+    outputExtension: "txt",
+    maxFileSizeMB: 10,
+    maxBatchSize: 1,
+    searchVolume: 300000,
+    relatedTools: ["base64-to-image", "jpg-to-png", "image-compressor", "svg-to-png"],
+    howToSteps: [
+      "Upload your image by dropping it onto the tool or clicking to browse.",
+      "The Base64 string and data URI are generated instantly.",
+      "Click 'Copy' to copy the Base64 string or data URI to your clipboard.",
+    ],
+    faqs: [
+      {
+        question: "What is Base64 image encoding?",
+        answer:
+          "Base64 encoding converts binary image data into a text string that can be embedded directly in HTML, CSS, JSON, or any text-based format without needing a separate file.",
+      },
+      {
+        question: "What's the difference between Base64 and data URI?",
+        answer:
+          "A data URI includes the MIME type prefix (e.g., data:image/png;base64,...) making it ready to use in img src or CSS background-image. Raw Base64 is just the encoded string without the prefix.",
+      },
+      {
+        question: "Is there a file size limit?",
+        answer:
+          "Up to 10MB. Larger images produce very long Base64 strings — for big files it's better to serve them as regular files.",
+      },
+      {
+        question: "Is this free?",
+        answer: "100% free. No account required.",
+      },
+    ],
+  },
+  {
+    id: "base64-to-image",
+    category: "image",
+    slug: "/image/base64-to-image",
+    title: "Base64 to Image Converter – Free Online",
+    headline: "Convert Base64 to Image Online Free",
+    description:
+      "Convert Base64 strings back to images online for free. Paste a Base64 string or data URI and download as PNG, JPG, or WebP. No upload needed.",
+    longDescription:
+      "Our free Base64 to image converter decodes a Base64 encoded string back into a downloadable image file directly in your browser. Paste a raw Base64 string or a full data URI (data:image/png;base64,...) and preview the image instantly. Download as PNG, JPG, or WebP. No server involved — decoding is entirely client-side.",
+    actionVerb: "convert Base64 to image",
+    keywords: [
+      "base64 to image",
+      "base64 to image converter",
+      "convert base64 to image",
+      "base64 decode image",
+      "base64 to png",
+      "base64 to jpg",
+      "decode base64 image online",
+      "base64 image decoder",
+      "base64 to image online free",
+      "data uri to image",
+    ],
+    inputFormats: ["text/plain"],
+    outputFormat: "image/png",
+    outputExtension: "png",
+    maxFileSizeMB: 10,
+    maxBatchSize: 1,
+    searchVolume: 220000,
+    relatedTools: ["image-to-base64", "jpg-to-png", "image-compressor", "svg-to-png"],
+    howToSteps: [
+      "Paste your Base64 string or data URI into the text area.",
+      "The image preview appears instantly.",
+      "Click Download to save the image as PNG, JPG, or WebP.",
+    ],
+    faqs: [
+      {
+        question: "What input formats are accepted?",
+        answer:
+          "Raw Base64 strings and full data URIs (data:image/...;base64,...) are both supported.",
+      },
+      {
+        question: "What output formats are available?",
+        answer: "PNG, JPG, and WebP. PNG is the default for lossless output.",
+      },
+      {
+        question: "Is this free?",
+        answer: "100% free. No account, no upload.",
+      },
+      {
+        question: "Do I need to include the data URI prefix?",
+        answer:
+          "No — the tool auto-detects whether you've pasted a raw Base64 string or a full data URI with prefix.",
+      },
+    ],
+  },
+  {
+    id: "color-picker",
+    category: "image",
+    slug: "/image/color-picker",
+    title: "Color Picker from Image – Get HEX, RGB, HSL Online Free",
+    headline: "Pick Colors from Image Online Free",
+    description:
+      "Pick any color from an image and get its HEX, RGB, and HSL values instantly. Free online color picker tool — no upload needed, works in your browser.",
+    longDescription:
+      "Our free image color picker lets you click anywhere on a photo to instantly get the exact HEX, RGB, and HSL color codes. Perfect for designers who need to match colors from screenshots, logos, or photos. Move your cursor over the image to preview colors in real time. No image is uploaded — everything runs locally in your browser using the Canvas API.",
+    actionVerb: "pick colors from image",
+    keywords: [
+      "color picker from image",
+      "color picker",
+      "get color from image",
+      "image color picker",
+      "pick color from image",
+      "color picker online",
+      "hex color picker from image",
+      "eyedropper tool online",
+      "get hex code from image",
+      "color picker from photo",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+    outputFormat: "text/plain",
+    outputExtension: "txt",
+    maxFileSizeMB: 20,
+    maxBatchSize: 1,
+    searchVolume: 500000,
+    relatedTools: ["image-to-base64", "image-compressor", "image-resizer", "image-cropper"],
+    howToSteps: [
+      "Upload an image by dropping it or clicking to browse.",
+      "Move your cursor over the image to preview colors in real time.",
+      "Click anywhere on the image to lock a color and copy its HEX, RGB, or HSL value.",
+    ],
+    faqs: [
+      {
+        question: "What color formats does the picker output?",
+        answer: "HEX (#rrggbb), RGB (rgb(r, g, b)), and HSL (hsl(h, s%, l%)) — all three simultaneously.",
+      },
+      {
+        question: "Can I pick colors from any image?",
+        answer: "Yes — JPG, PNG, WebP, and GIF files are all supported.",
+      },
+      {
+        question: "Is this tool free?",
+        answer: "100% free. No account, no upload.",
+      },
+      {
+        question: "Does my image get uploaded?",
+        answer: "No. The color picker runs entirely in your browser. Your image never leaves your device.",
+      },
+    ],
+  },
+  {
+    id: "image-metadata",
+    category: "image",
+    slug: "/image/image-metadata",
+    title: "Image Metadata Viewer – View EXIF Data Online Free",
+    headline: "View Image Metadata & EXIF Data Online Free",
+    description:
+      "View image metadata and EXIF data online for free. See dimensions, file size, camera model, GPS location, date taken, and more. No upload — runs in your browser.",
+    longDescription:
+      "Our free image metadata viewer reads all embedded EXIF and file metadata from your images directly in your browser — no file is uploaded. See the image dimensions, DPI, color space, camera make and model, lens info, exposure settings, ISO, GPS coordinates, date/time taken, and software used. Works with JPG, PNG, WebP, and TIFF files.",
+    actionVerb: "view image metadata",
+    keywords: [
+      "image metadata viewer",
+      "exif data viewer",
+      "view image metadata",
+      "exif viewer online",
+      "image exif viewer",
+      "photo metadata viewer",
+      "view exif data online",
+      "image info viewer",
+      "check image metadata online",
+      "exif reader online free",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/webp"],
+    outputFormat: "text/plain",
+    outputExtension: "json",
+    maxFileSizeMB: 50,
+    maxBatchSize: 1,
+    searchVolume: 180000,
+    relatedTools: ["image-to-base64", "image-compressor", "jpg-to-png", "image-resizer"],
+    howToSteps: [
+      "Drop your image onto the metadata viewer or click to browse.",
+      "All available metadata is displayed instantly — dimensions, EXIF, GPS, camera info.",
+      "Click any value to copy it, or export all metadata as JSON.",
+    ],
+    faqs: [
+      {
+        question: "What metadata can I see?",
+        answer:
+          "Dimensions, file size, DPI, color space, camera make/model, lens info, focal length, aperture, shutter speed, ISO, GPS coordinates, date taken, and software.",
+      },
+      {
+        question: "Does my image get uploaded?",
+        answer:
+          "No. Metadata is read directly from the file in your browser. Nothing is sent to any server.",
+      },
+      {
+        question: "Does every image have EXIF data?",
+        answer:
+          "No. Screenshots, web-saved images, and images processed by some editors have EXIF stripped. Camera photos and RAW files usually have full EXIF.",
+      },
+      {
+        question: "Is this tool free?",
+        answer: "100% free. No account required.",
+      },
+    ],
+  },
+  {
+    id: "image-watermark",
+    category: "image",
+    slug: "/image/image-watermark",
+    title: "Add Watermark to Image – Free Online Tool",
+    headline: "Add Watermark to Image Online Free",
+    description:
+      "Add text or image watermarks to photos online for free. Customize font, size, position, opacity, and color. No upload — runs entirely in your browser.",
+    longDescription:
+      "Our free online watermark tool lets you add custom text watermarks to images directly in your browser. Choose the watermark text, font size, color, opacity, and position (9 presets or drag to any spot). Perfect for protecting photos, adding copyright notices, or branding images. No image is ever uploaded — everything runs via Canvas API in your browser. Batch watermark up to 20 images at once.",
+    actionVerb: "add watermark to images",
+    keywords: [
+      "add watermark to image",
+      "image watermark",
+      "watermark image online",
+      "add watermark online",
+      "watermark photo",
+      "add text to image",
+      "watermark image free",
+      "online watermark tool",
+      "add copyright to image",
+      "photo watermark online free",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/webp"],
+    outputFormat: "image/jpeg",
+    outputExtension: "jpg",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 350000,
+    relatedTools: ["image-compressor", "image-resizer", "image-cropper", "jpg-to-png"],
+    howToSteps: [
+      "Upload your images by dropping them onto the tool.",
+      "Enter your watermark text and customize font, size, color, opacity, and position.",
+      "Click 'Apply Watermark' and download your watermarked images.",
+    ],
+    faqs: [
+      {
+        question: "Can I add a logo or image as a watermark?",
+        answer:
+          "Currently text watermarks are supported. Image/logo watermark support is coming soon.",
+      },
+      {
+        question: "Can I batch watermark multiple images?",
+        answer: "Yes — apply the same watermark to up to 20 images simultaneously.",
+      },
+      {
+        question: "What output format is used?",
+        answer: "JPG by default. Switch to PNG if you need a transparent background preserved.",
+      },
+      {
+        question: "Do my images get uploaded?",
+        answer: "No. Watermarking runs entirely in your browser via Canvas API.",
+      },
+      {
+        question: "Is this free?",
+        answer: "100% free. No sign-up required.",
+      },
+    ],
+  },
 ];
 
 export const allTools: ToolConfig[] = [...imageTools];

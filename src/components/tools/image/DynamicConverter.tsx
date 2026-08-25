@@ -35,3 +35,28 @@ export const DynamicImageSvgConverter = dynamic(
   () => import("./ImageSvgConverter"),
   { ssr: false, loading: ConverterSkeleton }
 );
+
+export const DynamicImageBase64Converter = dynamic(
+  () => import("./ImageBase64Converter"),
+  { ssr: false, loading: ConverterSkeleton }
+);
+
+export const DynamicBase64ToImage = dynamic(
+  () => import("./Base64ToImage"),
+  { ssr: false, loading: ConverterSkeleton }
+);
+
+export const DynamicColorPicker = dynamic(
+  () => import("./ColorPicker"),
+  { ssr: false, loading: ConverterSkeleton }
+);
+
+export const DynamicImageMetadata = dynamic(
+  () => import("./ImageMetadata"),
+  { ssr: false, loading: ConverterSkeleton }
+);
+
+export const DynamicImageWatermark = dynamic(
+  () => import("./ImageWatermark"),
+  { ssr: false, loading: ConverterSkeleton }
+);

@@ -45,7 +45,7 @@ const categories = [
     name: "Image Tools",
     description: "Convert, compress, and resize images in seconds",
     href: "/image",
-    count: 10,
+    count: 17,
     available: true,
     gradient: "from-indigo-500 to-violet-600",
     bg: "from-indigo-50 to-violet-50",

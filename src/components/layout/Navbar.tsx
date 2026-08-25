@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown, Zap, ArrowRight,
-         RefreshCw, Minimize2, Maximize2, Crop,
-         FileImage, Layers } from "lucide-react";
+         RefreshCw, Minimize2, FileImage, Layers, Video } from "lucide-react";
 import Logo from "./Logo";
 import { imageTools } from "@/config/tools";
 
@@ -25,7 +24,7 @@ const imageToolGroups = [
     icon: Minimize2,
     color: "text-violet-500",
     tools: imageTools.filter(t =>
-      ["image-compressor","image-resizer","image-cropper"].includes(t.id)
+      ["image-compressor","image-resizer","image-cropper","image-watermark"].includes(t.id)
     ),
   },
   {
@@ -33,14 +32,22 @@ const imageToolGroups = [
     icon: FileImage,
     color: "text-sky-500",
     tools: imageTools.filter(t =>
-      ["svg-to-png","gif-to-png"].includes(t.id)
+      ["svg-to-png","gif-to-png","image-to-base64","base64-to-image"].includes(t.id)
+    ),
+  },
+  {
+    heading: "Analyse",
+    icon: Layers,
+    color: "text-emerald-500",
+    tools: imageTools.filter(t =>
+      ["color-picker","image-metadata"].includes(t.id)
     ),
   },
 ];
 
 const comingSoonGroups = [
   { label: "PDF Tools",   icon: Layers,   count: 8  },
-  { label: "Video Tools", icon: Maximize2, count: 6  },
+  { label: "Video Tools", icon: Video,   count: 6  },
 ];
 
 export default function Navbar() {
@@ -107,7 +114,7 @@ export default function Navbar() {
             {/* Mega-menu panel */}
             {imgDropdown && (
               <div
-                className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[640px] animate-scale-in"
+                className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[820px] animate-scale-in"
                 onMouseEnter={openDrop}
                 onMouseLeave={closeDrop}
               >
@@ -133,7 +140,7 @@ export default function Navbar() {
                   </div>
 
                   {/* Tool groups grid */}
-                  <div className="grid grid-cols-3 divide-x divide-slate-100">
+                  <div className="grid grid-cols-4 divide-x divide-slate-100">
                     {imageToolGroups.map((group) => {
                       const GroupIcon = group.icon;
                       return (
