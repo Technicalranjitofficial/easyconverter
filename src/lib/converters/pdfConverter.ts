@@ -353,3 +353,50 @@ export async function getPdfInfo(file: File): Promise<PdfInfo> {
     author: doc.getAuthor() ?? undefined,
   };
 }
+
+// ─── Page thumbnails ──────────────────────────────────────────────────────────
+
+export interface PdfPageThumb {
+  pageNumber: number;   // 1-indexed
+  dataUrl: string;      // base64 canvas snapshot
+  width: number;
+  height: number;
+}
+
+/**
+ * Renders every page of a PDF to a small canvas thumbnail using pdfjs-dist.
+ * @param scale  0.15–0.3 is good for thumbnails (default 0.2 ≈ 120px wide for A4)
+ */
+export async function renderPdfThumbnails(
+  file: File,
+  scale = 0.2,
+  onProgress?: (done: number, total: number) => void
+): Promise<PdfPageThumb[]> {
+  const pdfjsLib = await import("pdfjs-dist");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
+
+  const buf = await fileToArrayBuffer(file);
+  const pdfDoc = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+  const total = pdfDoc.numPages;
+  const thumbs: PdfPageThumb[] = [];
+
+  for (let i = 1; i <= total; i++) {
+    const page = await pdfDoc.getPage(i);
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement("canvas");
+    canvas.width  = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
+    const ctx = canvas.getContext("2d")!;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    thumbs.push({
+      pageNumber: i,
+      dataUrl: canvas.toDataURL("image/jpeg", 0.7),
+      width: canvas.width,
+      height: canvas.height,
+    });
+    onProgress?.(i, total);
+  }
+  return thumbs;
+}

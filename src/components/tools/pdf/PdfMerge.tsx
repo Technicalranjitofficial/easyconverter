@@ -1,36 +1,53 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Loader2, Merge, X, GripVertical, Download, RotateCcw, FileText } from "lucide-react";
+import { Loader2, Merge, X, Download, RotateCcw, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import PdfDropZone from "./PdfDropZone";
+import PdfPagePreview from "./PdfPagePreview";
 import { mergePdfs } from "@/lib/converters/pdfConverter";
 import { formatBytes } from "@/lib/utils/fileUtils";
 import { triggerDownload } from "@/lib/utils/downloadUtils";
 
-interface PdfFile { id: string; file: File; }
+interface PdfEntry {
+  id: string;
+  file: File;
+  pageCount: number;
+  expanded: boolean;
+}
 
 export default function PdfMerge() {
-  const [files, setFiles]     = useState<PdfFile[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult]   = useState<{ blob: Blob; size: number; pages: number } | null>(null);
-  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [entries, setEntries]   = useState<PdfEntry[]>([]);
+  const [dragIdx, setDragIdx]   = useState<number | null>(null);
+  const [loading, setLoading]   = useState(false);
+  const [result, setResult]     = useState<{ blob: Blob; size: number; pages: number } | null>(null);
 
-  const addFiles = useCallback((incoming: File[]) => {
-    setFiles(prev => [
+  const addFiles = useCallback((files: File[]) => {
+    setEntries(prev => [
       ...prev,
-      ...incoming.map(f => ({ id: `${f.name}-${f.lastModified}-${Math.random()}`, file: f })),
+      ...files.map(f => ({
+        id: `${f.name}-${f.lastModified}-${Math.random()}`,
+        file: f,
+        pageCount: 0,
+        expanded: false,
+      })),
     ]);
     setResult(null);
   }, []);
 
-  const remove = (id: string) => setFiles(prev => prev.filter(f => f.id !== id));
+  const setPageCount = (id: string, count: number) =>
+    setEntries(prev => prev.map(e => e.id === id ? { ...e, pageCount: count } : e));
 
-  // Drag-to-reorder
+  const toggleExpand = (id: string) =>
+    setEntries(prev => prev.map(e => e.id === id ? { ...e, expanded: !e.expanded } : e));
+
+  const remove = (id: string) => setEntries(prev => prev.filter(e => e.id !== id));
+
+  // File-level drag-to-reorder
   const handleDragStart = (i: number) => setDragIdx(i);
   const handleDragOver  = (e: React.DragEvent, i: number) => {
     e.preventDefault();
     if (dragIdx === null || dragIdx === i) return;
-    setFiles(prev => {
+    setEntries(prev => {
       const next = [...prev];
       const [item] = next.splice(dragIdx, 1);
       next.splice(i, 0, item);
@@ -40,90 +57,121 @@ export default function PdfMerge() {
   };
 
   const handleMerge = async () => {
-    if (files.length < 2) return;
+    if (entries.length < 2) return;
     setLoading(true);
     try {
-      const r = await mergePdfs(files.map(f => f.file));
+      const r = await mergePdfs(entries.map(e => e.file));
       setResult({ blob: r.blob, size: r.resultSize, pages: r.pageCount });
-    } catch { alert("Failed to merge PDFs. Ensure all files are valid, unlocked PDFs."); }
+    } catch { alert("Merge failed. Ensure all files are valid, unlocked PDFs."); }
     finally { setLoading(false); }
   };
 
-  const reset = () => { setFiles([]); setResult(null); };
-
-  const totalSize = files.reduce((s, f) => s + f.file.size, 0);
+  const reset = () => { setEntries([]); setResult(null); };
+  const totalSize = entries.reduce((s, e) => s + e.file.size, 0);
 
   return (
     <div className="w-full space-y-5">
-      {!result && (
-        <PdfDropZone onFilesAdded={addFiles} multiple disabled={loading} />
-      )}
+      {!result && <PdfDropZone onFilesAdded={addFiles} multiple disabled={loading} />}
 
-      {files.length > 0 && !result && (
-        <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-              <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
-                {files.length} file{files.length !== 1 ? "s" : ""} · {formatBytes(totalSize)} total
-              </span>
-            </div>
-            <span className="text-xs text-slate-500">Drag to reorder</span>
-          </div>
-
-          <div className="divide-y divide-slate-100">
-            {files.map((pf, i) => (
-              <div
-                key={pf.id}
-                draggable
-                onDragStart={() => handleDragStart(i)}
-                onDragOver={e => handleDragOver(e, i)}
-                onDragEnd={() => setDragIdx(null)}
-                className={`flex items-center gap-3 px-4 py-3 bg-white hover:bg-slate-50 transition-colors
-                            cursor-grab active:cursor-grabbing select-none
-                            ${dragIdx === i ? "opacity-50 bg-indigo-50" : ""}`}
-              >
-                <GripVertical className="w-4 h-4 text-slate-300 flex-shrink-0" />
-                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-4 h-4 text-red-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-700 truncate">{pf.file.name}</p>
-                  <p className="text-xs text-slate-400">{formatBytes(pf.file.size)}</p>
-                </div>
-                <span className="text-xs text-slate-300 font-mono w-5 text-center flex-shrink-0">{i + 1}</span>
-                <button onClick={() => remove(pf.id)} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-red-500 transition-colors flex-shrink-0">
-                  <X className="w-4 h-4" />
-                </button>
+      {entries.length > 0 && !result && (
+        <div className="space-y-3">
+          {/* File list with per-file thumbnail expand */}
+          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
+                  {entries.length} file{entries.length !== 1 ? "s" : ""} · {formatBytes(totalSize)} · drag to reorder
+                </span>
               </div>
-            ))}
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {entries.map((entry, i) => (
+                <div
+                  key={entry.id}
+                  draggable
+                  onDragStart={() => handleDragStart(i)}
+                  onDragOver={e => handleDragOver(e, i)}
+                  onDragEnd={() => setDragIdx(null)}
+                  className={`bg-white transition-opacity ${dragIdx === i ? "opacity-40" : ""}`}
+                >
+                  {/* File row */}
+                  <div className="flex items-center gap-3 px-4 py-3 select-none cursor-grab active:cursor-grabbing">
+                    {/* Order number */}
+                    <span className="text-xs font-bold text-slate-400 w-5 text-center flex-shrink-0">{i + 1}</span>
+
+                    <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                      <FileText className="w-4 h-4 text-red-500" />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-700 truncate">{entry.file.name}</p>
+                      <p className="text-xs text-slate-400">
+                        {formatBytes(entry.file.size)}
+                        {entry.pageCount > 0 && ` · ${entry.pageCount} page${entry.pageCount !== 1 ? "s" : ""}`}
+                      </p>
+                    </div>
+
+                    {/* Expand thumbnails */}
+                    <button
+                      onClick={() => toggleExpand(entry.id)}
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium
+                                 text-slate-500 hover:bg-slate-100 transition-colors flex-shrink-0"
+                    >
+                      {entry.expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                      {entry.expanded ? "Hide" : "Preview"}
+                    </button>
+
+                    <button
+                      onClick={() => remove(entry.id)}
+                      className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-red-500 transition-colors flex-shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Page thumbnail preview (expandable) */}
+                  {entry.expanded && (
+                    <div className="px-4 pb-4">
+                      <PdfPagePreview
+                        file={entry.file}
+                        selectionMode="none"
+                        showLabel
+                        onLoaded={thumbs => setPageCount(entry.id, thumbs.length)}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Merge button */}
+          {entries.length >= 2 ? (
+            <button
+              onClick={handleMerge}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2.5
+                         py-4 rounded-2xl font-semibold text-white text-base
+                         bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-600
+                         hover:from-slate-800 hover:via-indigo-600 hover:to-indigo-500
+                         disabled:opacity-60 disabled:cursor-not-allowed
+                         shadow-[0_4px_20px_rgba(79,70,229,0.4)]
+                         hover:-translate-y-0.5 transition-all duration-200"
+            >
+              {loading
+                ? <><Loader2 className="w-5 h-5 animate-spin" />Merging…</>
+                : <><Merge className="w-5 h-5" />Merge {entries.length} PDFs</>
+              }
+            </button>
+          ) : (
+            <p className="text-center text-sm text-slate-400">Add at least 2 PDF files to merge.</p>
+          )}
         </div>
       )}
 
-      {files.length >= 2 && !result && (
-        <button
-          onClick={handleMerge}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-2.5
-                     py-4 rounded-2xl font-semibold text-white text-base
-                     bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-600
-                     hover:from-slate-800 hover:via-indigo-600 hover:to-indigo-500
-                     disabled:opacity-60 disabled:cursor-not-allowed
-                     shadow-[0_4px_20px_rgba(79,70,229,0.4)]
-                     hover:-translate-y-0.5 transition-all duration-200"
-        >
-          {loading
-            ? <><Loader2 className="w-5 h-5 animate-spin" />Merging {files.length} PDFs…</>
-            : <><Merge className="w-5 h-5" />Merge {files.length} PDFs</>
-          }
-        </button>
-      )}
-
-      {files.length < 2 && files.length > 0 && !result && (
-        <p className="text-center text-sm text-slate-400">Add at least 2 PDF files to merge.</p>
-      )}
-
+      {/* Result */}
       {result && (
         <div className="rounded-2xl overflow-hidden border border-emerald-200 shadow-sm animate-slide-up">
           <div className="flex items-center gap-2.5 px-4 py-2.5 bg-slate-900">
@@ -141,12 +189,12 @@ export default function PdfMerge() {
                          bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-600
                          hover:-translate-y-0.5 transition-all"
             >
-              <Download className="w-4 h-4" /> Download Merged PDF
+              <Download className="w-4 h-4" />Download Merged PDF
             </button>
             <button onClick={reset}
               className="flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-semibold
                          text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all">
-              <RotateCcw className="w-4 h-4" /> Reset
+              <RotateCcw className="w-4 h-4" />Reset
             </button>
           </div>
         </div>
