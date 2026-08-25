@@ -430,7 +430,23 @@ export async function getPdfInfo(file: File): Promise<PdfInfo> {
   };
 }
 
-// ─── Page thumbnails ──────────────────────────────────────────────────────────
+// ─── Detect if PDF has embedded images (for compressor UI) ───────────────────
+
+export async function hasPdfImages(file: File): Promise<boolean> {
+  const buf = await fileToArrayBuffer(file);
+  const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
+  try {
+    for (const [, obj] of doc.context.enumerateIndirectObjects()) {
+      if (!obj || typeof obj !== "object" || !("dict" in obj) || !("contents" in obj)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const dict = (obj as any).dict as any;
+      if (!dict?.get) continue;
+      const subtype = dict.get("Subtype");
+      if (subtype && subtype.toString().includes("Image")) return true;
+    }
+  } catch { /* ignore */ }
+  return false;
+}
 
 export interface PdfPageThumb {
   pageNumber: number;   // 1-indexed
