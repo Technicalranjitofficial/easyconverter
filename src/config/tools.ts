@@ -1,0 +1,767 @@
+export type ToolCategory = "image" | "pdf" | "video" | "audio" | "unit" | "code";
+export type ImageOutputFormat = "image/jpeg" | "image/png" | "image/webp";
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
+export interface ToolConfig {
+  id: string;
+  category: ToolCategory;
+  slug: string;
+  title: string;
+  headline: string;
+  description: string;
+  keywords: string[];
+  inputFormats: string[];
+  outputFormat: string;
+  outputExtension: string;
+  maxFileSizeMB: number;
+  maxBatchSize: number;
+  faqs: FAQ[];
+  howToSteps: string[];
+  relatedTools: string[];
+  searchVolume: number;
+  comingSoon?: boolean;
+  longDescription: string;
+  actionVerb: string;
+}
+
+export const imageTools: ToolConfig[] = [
+  {
+    id: "jpg-to-png",
+    category: "image",
+    slug: "/image/jpg-to-png",
+    title: "JPG to PNG Converter – Free Online, No Upload",
+    headline: "Convert JPG to PNG Free Online",
+    description:
+      "Convert JPG to PNG online for free. No upload required — conversion happens instantly in your browser. Supports batch conversion of up to 20 JPEG files at once.",
+    longDescription:
+      "Our free JPG to PNG converter lets you change JPEG images to PNG format directly in your browser — no file upload, no sign-up, no watermarks. PNG is a lossless format that preserves every pixel of your original JPG while adding transparency support, making it ideal for logos, graphics, and screenshots. The conversion uses your browser's native Canvas API, so your files never leave your device. You can convert JPG to PNG in seconds and batch-process up to 20 JPEG images simultaneously.",
+    actionVerb: "convert JPG to PNG",
+    keywords: [
+      "jpg to png",
+      "jpg to png converter",
+      "convert jpg to png",
+      "jpeg to png converter",
+      "jpg to png online",
+      "jpg to png free",
+      "convert jpeg to png online free",
+      "jpg png",
+      "jpeg png converter",
+      "change jpg to png",
+    ],
+    inputFormats: ["image/jpeg"],
+    outputFormat: "image/png",
+    outputExtension: "png",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 800000,
+    relatedTools: ["png-to-jpg", "image-to-webp", "image-compressor", "png-to-webp"],
+    howToSteps: [
+      "Click 'Choose Files' or drag and drop your JPG images onto the drop zone.",
+      "Click the 'Convert to PNG' button — conversion happens instantly in your browser.",
+      "Download your PNG files individually or all at once as a ZIP.",
+    ],
+    faqs: [
+      {
+        question: "Is the JPG to PNG converter free?",
+        answer:
+          "Yes, completely free with no limits. No account required, no watermarks, no hidden fees.",
+      },
+      {
+        question: "Do my files get uploaded to a server?",
+        answer:
+          "No. All conversion happens directly in your browser using the Canvas API. Your files never leave your device.",
+      },
+      {
+        question: "Will converting JPG to PNG increase file size?",
+        answer:
+          "Yes, PNG is a lossless format and is typically larger than JPG. If file size matters more than quality, consider using WebP instead.",
+      },
+      {
+        question: "Can I convert multiple JPG files at once?",
+        answer:
+          "Yes, you can batch convert up to 20 JPG files at once. All files are processed simultaneously.",
+      },
+      {
+        question: "Does PNG support transparency?",
+        answer:
+          "Yes. Unlike JPG, PNG supports transparent backgrounds. However, the converted PNG will have a white background since JPG has no transparency data.",
+      },
+    ],
+  },
+  {
+    id: "png-to-jpg",
+    category: "image",
+    slug: "/image/png-to-jpg",
+    title: "PNG to JPG Converter – Free Online, No Upload",
+    headline: "Convert PNG to JPG Free Online",
+    description:
+      "Convert PNG to JPG online for free. Reduce file size by up to 80% with adjustable quality. No upload needed — runs entirely in your browser. Batch convert up to 20 PNG files.",
+    longDescription:
+      "Our free PNG to JPG converter compresses PNG images to JPEG format directly in your browser, with no file upload or account required. Converting PNG to JPG can reduce file size by 60–80%, making images load faster on websites and emails. Use the quality slider to balance file size against image sharpness. Transparent areas in your PNG are automatically filled with a white background in the JPG output. Batch-convert up to 20 PNG files simultaneously.",
+    actionVerb: "convert PNG to JPG",
+    keywords: [
+      "png to jpg",
+      "png to jpg converter",
+      "convert png to jpg",
+      "png to jpeg",
+      "png to jpg online",
+      "png to jpg free",
+      "convert png to jpeg online free",
+      "png jpg converter",
+      "change png to jpg",
+      "png to jpg without losing quality",
+    ],
+    inputFormats: ["image/png"],
+    outputFormat: "image/jpeg",
+    outputExtension: "jpg",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 600000,
+    relatedTools: ["jpg-to-png", "image-compressor", "image-to-webp", "webp-to-jpg"],
+    howToSteps: [
+      "Drop your PNG files onto the upload area or click to browse.",
+      "Adjust the quality slider (default 92%) to balance size vs. quality.",
+      "Click 'Convert to JPG' and download your compressed files.",
+    ],
+    faqs: [
+      {
+        question: "Is there quality loss when converting PNG to JPG?",
+        answer:
+          "JPG uses lossy compression, so some quality is reduced. At 90%+ quality the difference is barely visible. Use the quality slider to control this trade-off.",
+      },
+      {
+        question: "What happens to transparent areas in PNG?",
+        answer:
+          "JPG doesn't support transparency. Transparent areas in your PNG will be filled with a white background in the converted JPG.",
+      },
+      {
+        question: "How much smaller will the JPG be?",
+        answer:
+          "Typically 50–80% smaller than the original PNG, depending on the image content and quality setting.",
+      },
+      {
+        question: "Can I batch convert multiple PNG files?",
+        answer: "Yes, up to 20 files at once. All convert simultaneously in your browser.",
+      },
+      {
+        question: "Is this tool free to use?",
+        answer: "100% free. No sign-up, no watermarks, no limits.",
+      },
+    ],
+  },
+  {
+    id: "image-to-webp",
+    category: "image",
+    slug: "/image/image-to-webp",
+    title: "Image to WebP Converter – Free Online, No Upload",
+    headline: "Convert Images to WebP Free Online",
+    description:
+      "Convert JPG, PNG, and GIF to WebP online for free. WebP images are 25–35% smaller than JPG at the same quality. No upload required — runs in your browser.",
+    longDescription:
+      "Our free image to WebP converter changes JPG, PNG, and GIF files to WebP format directly in your browser. WebP is Google's modern image format that delivers smaller file sizes — typically 25–35% smaller than JPEG and up to 80% smaller than PNG — without a visible quality difference. Converting images to WebP improves your website's Core Web Vitals and page speed. No file is uploaded to any server. Batch-convert up to 20 images to WebP at once.",
+    actionVerb: "convert images to WebP",
+    keywords: [
+      "image to webp",
+      "jpg to webp",
+      "png to webp",
+      "convert to webp",
+      "convert image to webp online free",
+      "webp converter",
+      "webp converter online",
+      "jpg to webp converter",
+      "png to webp converter",
+      "image to webp converter free",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/gif"],
+    outputFormat: "image/webp",
+    outputExtension: "webp",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 400000,
+    relatedTools: ["webp-to-png", "webp-to-jpg", "image-compressor", "png-to-webp"],
+    howToSteps: [
+      "Upload your JPG, PNG, or GIF files by dropping them on the upload area.",
+      "Optionally adjust the quality setting (default 85% for optimal size/quality balance).",
+      "Click convert and download your WebP files.",
+    ],
+    faqs: [
+      {
+        question: "Why should I use WebP instead of JPG or PNG?",
+        answer:
+          "WebP is 25–35% smaller than JPG and up to 80% smaller than PNG at equivalent quality, making pages load faster.",
+      },
+      {
+        question: "Is WebP supported by all browsers?",
+        answer:
+          "Yes. WebP is supported by Chrome, Firefox, Safari (14+), Edge, and all modern mobile browsers.",
+      },
+      {
+        question: "Does WebP support transparency like PNG?",
+        answer:
+          "Yes. WebP supports both lossy and lossless compression, as well as transparency (alpha channel).",
+      },
+      {
+        question: "Can I convert GIF to WebP?",
+        answer:
+          "Yes, but animated GIFs will be converted as a static image (first frame). Animated WebP conversion requires additional processing.",
+      },
+      {
+        question: "Is this converter free?",
+        answer: "Completely free, no account needed, no file limits.",
+      },
+    ],
+  },
+  {
+    id: "image-compressor",
+    category: "image",
+    slug: "/image/image-compressor",
+    title: "Image Compressor – Compress Images Online Free",
+    headline: "Compress Images Online Free — Up to 80% Smaller",
+    description:
+      "Compress JPG, PNG, and WebP images online for free. Reduce image file size by up to 80% without visible quality loss. No upload required — works in your browser.",
+    longDescription:
+      "Our free online image compressor reduces JPG, PNG, and WebP file sizes by up to 80% without any noticeable quality loss. Large images slow down websites and increase storage costs — our tool uses smart quality compression to shrink your images while keeping them sharp. Use the quality slider to find the perfect balance. All compression happens locally in your browser — your images are never uploaded to any server. Compress images in bulk: up to 20 files simultaneously.",
+    actionVerb: "compress images",
+    keywords: [
+      "image compressor",
+      "compress image",
+      "compress image online",
+      "image compressor online",
+      "compress jpg",
+      "compress png",
+      "reduce image size",
+      "compress image without losing quality",
+      "online image compressor free",
+      "reduce image file size",
+      "compress photo",
+      "image size reducer",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/webp"],
+    outputFormat: "image/jpeg",
+    outputExtension: "jpg",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 500000,
+    relatedTools: ["image-resizer", "jpg-to-png", "image-to-webp", "png-to-jpg"],
+    howToSteps: [
+      "Upload your images by dropping them onto the area or clicking to browse.",
+      "Use the quality slider to set your desired compression level (80% recommended).",
+      "Click Compress and download your smaller image files.",
+    ],
+    faqs: [
+      {
+        question: "How much can you compress an image?",
+        answer:
+          "Typically 40–80% file size reduction depending on the original image and quality setting. Photos compress more than graphics.",
+      },
+      {
+        question: "Will compression affect image quality?",
+        answer:
+          "At 80%+ quality the difference is almost invisible to the naked eye. Lower quality settings show more artifacts but produce smaller files.",
+      },
+      {
+        question: "What image formats can I compress?",
+        answer: "JPG, PNG, and WebP. All three formats are supported for batch compression.",
+      },
+      {
+        question: "Is there a file size limit?",
+        answer: "Up to 50MB per file, up to 20 files at once.",
+      },
+      {
+        question: "Do files get sent to a server?",
+        answer:
+          "No. Everything runs locally in your browser. Your images are never uploaded anywhere.",
+      },
+    ],
+  },
+  {
+    id: "image-resizer",
+    category: "image",
+    slug: "/image/image-resizer",
+    title: "Image Resizer – Resize Images Online Free",
+    headline: "Resize Images Online Free — Set Exact Dimensions",
+    description:
+      "Resize images to exact pixel dimensions online for free. Set custom width and height, maintain aspect ratio. Supports JPG, PNG, WebP. No upload needed.",
+    longDescription:
+      "Our free online image resizer lets you change image dimensions to exact pixel sizes instantly. Whether you need to resize images for social media (Instagram, Twitter, Facebook), email, or web use, our tool handles it in seconds. Enable aspect ratio lock to prevent distortion when resizing. All resizing happens locally in your browser — no file is ever uploaded to a server. Batch-resize up to 10 images to the same dimensions at once.",
+    actionVerb: "resize images",
+    keywords: [
+      "image resizer",
+      "resize image",
+      "resize image online",
+      "resize image free",
+      "image resizer online",
+      "resize photo",
+      "change image size",
+      "crop and resize image online",
+      "resize image to specific size",
+      "resize jpg",
+      "resize png",
+      "image resize tool",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/webp"],
+    outputFormat: "image/jpeg",
+    outputExtension: "jpg",
+    maxFileSizeMB: 50,
+    maxBatchSize: 10,
+    searchVolume: 700000,
+    relatedTools: ["image-compressor", "jpg-to-png", "image-to-webp", "image-cropper"],
+    howToSteps: [
+      "Upload your image files to the resize tool.",
+      "Enter your target width and height in pixels. Toggle aspect ratio lock to avoid distortion.",
+      "Click Resize and download your resized images.",
+    ],
+    faqs: [
+      {
+        question: "Can I resize multiple images at once?",
+        answer:
+          "Yes, batch resize up to 10 images to the same dimensions simultaneously.",
+      },
+      {
+        question: "What is aspect ratio lock?",
+        answer:
+          "When enabled, changing the width automatically adjusts the height to maintain the original proportions, preventing distortion.",
+      },
+      {
+        question: "What output format does the resizer use?",
+        answer:
+          "By default JPG, but you can select PNG or WebP if you need transparency or lossless output.",
+      },
+      {
+        question: "Can I enlarge a small image?",
+        answer:
+          "Yes, but enlarging an image beyond its original resolution will reduce sharpness. Downscaling always produces better results.",
+      },
+      {
+        question: "Is the image resizer free?",
+        answer: "Yes, completely free. No account required.",
+      },
+    ],
+  },
+  // ─── WebP conversions ──────────────────────────────────────────────────────
+  {
+    id: "webp-to-jpg",
+    category: "image",
+    slug: "/image/webp-to-jpg",
+    title: "WebP to JPG Converter – Free Online, No Upload",
+    headline: "Convert WebP to JPG Free Online",
+    description:
+      "Convert WebP to JPG online for free. No upload required — conversion runs in your browser. Fast, private, and supports batch WebP to JPEG conversion.",
+    longDescription:
+      "Our free WebP to JPG converter changes WebP images to universally compatible JPEG format directly in your browser. WebP is great for the web, but many apps, email clients, and older devices don't support it. Converting WebP to JPG solves compatibility issues instantly. No file is uploaded — everything runs locally. Batch convert up to 20 WebP files to JPG at once.",
+    actionVerb: "convert WebP to JPG",
+    keywords: [
+      "webp to jpg",
+      "webp to jpg converter",
+      "convert webp to jpg",
+      "webp to jpeg",
+      "webp to jpg online",
+      "webp to jpg free",
+      "convert webp to jpeg online free",
+      "webp jpg converter",
+      "change webp to jpg",
+      "webp to jpg without losing quality",
+    ],
+    inputFormats: ["image/webp"],
+    outputFormat: "image/jpeg",
+    outputExtension: "jpg",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 350000,
+    relatedTools: ["webp-to-png", "jpg-to-png", "image-to-webp", "image-compressor"],
+    howToSteps: [
+      "Drop your WebP files onto the upload area or click to browse.",
+      "Click 'Convert to JPG' — your files are processed instantly in the browser.",
+      "Download individual JPG files or all at once as a ZIP archive.",
+    ],
+    faqs: [
+      {
+        question: "Why convert WebP to JPG?",
+        answer:
+          "JPG is more universally supported — especially in older apps, email clients, and Windows photo viewers that don't yet handle WebP.",
+      },
+      {
+        question: "Will there be quality loss?",
+        answer:
+          "Minimal at the default quality setting. Both WebP and JPG are lossy formats, so the conversion preserves most of the original detail.",
+      },
+      {
+        question: "What happens to WebP transparency?",
+        answer:
+          "JPG doesn't support transparency. Any transparent areas will be filled with a white background during conversion.",
+      },
+      {
+        question: "Can I batch convert WebP files?",
+        answer: "Yes, up to 20 WebP files at once.",
+      },
+      {
+        question: "Is this tool free?",
+        answer: "100% free. No account, no watermarks, no limits.",
+      },
+    ],
+  },
+  {
+    id: "webp-to-png",
+    category: "image",
+    slug: "/image/webp-to-png",
+    title: "WebP to PNG Converter – Free Online, No Upload",
+    headline: "Convert WebP to PNG Free Online",
+    description:
+      "Convert WebP to PNG online for free. Preserves transparency. No upload needed — runs in your browser. Free, fast, batch WebP to PNG conversion supported.",
+    longDescription:
+      "Our free WebP to PNG converter changes WebP images to lossless PNG format directly in your browser — no upload required, no account needed. PNG preserves transparency, so if your WebP has a transparent background it will be carried over to the PNG output. Batch convert up to 20 WebP files to PNG simultaneously.",
+    actionVerb: "convert WebP to PNG",
+    keywords: [
+      "webp to png",
+      "webp to png converter",
+      "convert webp to png",
+      "webp to png online",
+      "webp to png free",
+      "convert webp to png online free",
+      "webp png converter",
+      "change webp to png",
+    ],
+    inputFormats: ["image/webp"],
+    outputFormat: "image/png",
+    outputExtension: "png",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 280000,
+    relatedTools: ["webp-to-jpg", "png-to-jpg", "png-to-webp", "image-compressor"],
+    howToSteps: [
+      "Upload your WebP images by dropping them or clicking to browse.",
+      "Click 'Convert to PNG' — no quality settings needed, PNG is lossless.",
+      "Download your PNG files individually or as a ZIP.",
+    ],
+    faqs: [
+      {
+        question: "Does WebP to PNG preserve transparency?",
+        answer:
+          "Yes. PNG supports alpha transparency, so if your WebP has a transparent background it will be preserved in the output.",
+      },
+      {
+        question: "Will the PNG be larger than the WebP?",
+        answer:
+          "Yes. PNG is a lossless format and is typically larger than WebP. If file size matters, consider converting to JPG instead.",
+      },
+      {
+        question: "Is this converter free?",
+        answer: "Completely free. No sign-up, no limits, no watermarks.",
+      },
+      {
+        question: "Can I convert multiple WebP files at once?",
+        answer: "Yes, up to 20 files simultaneously.",
+      },
+    ],
+  },
+  {
+    id: "png-to-webp",
+    category: "image",
+    slug: "/image/png-to-webp",
+    title: "PNG to WebP Converter – Free Online, No Upload",
+    headline: "Convert PNG to WebP Free Online",
+    description:
+      "Convert PNG to WebP online for free. Reduce file size by up to 80% while keeping transparency. No upload — fully browser-based PNG to WebP converter.",
+    longDescription:
+      "Our free PNG to WebP converter changes PNG images to WebP format directly in your browser — up to 80% smaller file sizes with no visible quality difference. WebP supports alpha transparency just like PNG, so your transparent backgrounds are preserved. No file is ever uploaded. Batch convert up to 20 PNG files to WebP at once.",
+    actionVerb: "convert PNG to WebP",
+    keywords: [
+      "png to webp",
+      "png to webp converter",
+      "convert png to webp",
+      "png to webp online",
+      "png to webp free",
+      "convert png to webp online free",
+      "png webp converter",
+      "change png to webp",
+    ],
+    inputFormats: ["image/png"],
+    outputFormat: "image/webp",
+    outputExtension: "webp",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 200000,
+    relatedTools: ["webp-to-png", "image-to-webp", "png-to-jpg", "image-compressor"],
+    howToSteps: [
+      "Drop your PNG files or click to browse and select them.",
+      "Optionally adjust the quality slider (default 85% gives great results).",
+      "Click 'Convert to WebP' and download your smaller files.",
+    ],
+    faqs: [
+      {
+        question: "Does WebP support PNG transparency?",
+        answer:
+          "Yes. WebP supports alpha transparency just like PNG, so transparent backgrounds are preserved.",
+      },
+      {
+        question: "How much smaller will WebP be compared to PNG?",
+        answer:
+          "Typically 60–80% smaller. WebP uses much more efficient compression than PNG.",
+      },
+      {
+        question: "Will all browsers display WebP?",
+        answer:
+          "Yes. WebP is supported by all modern browsers including Chrome, Firefox, Safari 14+, and Edge.",
+      },
+      {
+        question: "Is this converter free?",
+        answer: "100% free. No account required.",
+      },
+    ],
+  },
+  {
+    id: "jpg-to-webp",
+    category: "image",
+    slug: "/image/jpg-to-webp",
+    title: "JPG to WebP Converter – Free Online, No Upload",
+    headline: "Convert JPG to WebP Free Online",
+    description:
+      "Convert JPG to WebP online for free. Up to 35% smaller than JPG at the same quality. No upload needed — runs in your browser. Free JPG to WebP conversion.",
+    longDescription:
+      "Our free JPG to WebP converter changes JPEG images to WebP format directly in your browser — 25–35% smaller file sizes with no visible difference. WebP improves your website's page load speed and Core Web Vitals scores. No file is ever uploaded. Batch convert up to 20 JPG files to WebP at once.",
+    actionVerb: "convert JPG to WebP",
+    keywords: [
+      "jpg to webp",
+      "jpg to webp converter",
+      "convert jpg to webp",
+      "jpeg to webp",
+      "jpg to webp online",
+      "jpg to webp free",
+      "convert jpg to webp online free",
+      "jpeg to webp converter",
+      "change jpg to webp",
+    ],
+    inputFormats: ["image/jpeg"],
+    outputFormat: "image/webp",
+    outputExtension: "webp",
+    maxFileSizeMB: 50,
+    maxBatchSize: 20,
+    searchVolume: 180000,
+    relatedTools: ["webp-to-jpg", "image-to-webp", "jpg-to-png", "image-compressor"],
+    howToSteps: [
+      "Upload your JPG/JPEG images by dragging and dropping or clicking to browse.",
+      "Adjust quality if needed (default 85% is optimal for most photos).",
+      "Click 'Convert to WebP' and download your files.",
+    ],
+    faqs: [
+      {
+        question: "How much smaller is WebP compared to JPG?",
+        answer:
+          "WebP is typically 25–35% smaller than JPG at equivalent visual quality.",
+      },
+      {
+        question: "Will my photos look different in WebP?",
+        answer:
+          "At 85%+ quality, the difference is invisible to the naked eye. WebP simply stores the same data more efficiently.",
+      },
+      {
+        question: "Is this free?",
+        answer: "Yes, 100% free with no account required.",
+      },
+      {
+        question: "Can I batch convert JPGs to WebP?",
+        answer: "Yes, up to 20 files at once.",
+      },
+    ],
+  },
+  // ─── Special tools ─────────────────────────────────────────────────────────
+  {
+    id: "svg-to-png",
+    category: "image",
+    slug: "/image/svg-to-png",
+    title: "SVG to PNG Converter – Free Online, Any Resolution",
+    headline: "Convert SVG to PNG Free Online",
+    description:
+      "Convert SVG to PNG online for free. Set custom output resolution. No upload — runs entirely in your browser. Free SVG to PNG converter with batch support.",
+    longDescription:
+      "Our free SVG to PNG converter renders SVG vector files to crisp PNG raster images directly in your browser at any resolution you choose. SVG files aren't accepted by many platforms like Instagram, Twitter, or Slack — converting SVG to PNG solves this instantly. No file is uploaded to any server. Batch convert up to 20 SVG files to PNG at once.",
+    actionVerb: "convert SVG to PNG",
+    keywords: [
+      "svg to png",
+      "svg to png converter",
+      "convert svg to png",
+      "svg to png online",
+      "svg to png free",
+      "convert svg to png online free",
+      "svg png converter",
+      "svg to raster",
+      "svg to image",
+      "change svg to png",
+    ],
+    inputFormats: ["image/svg+xml"],
+    outputFormat: "image/png",
+    outputExtension: "png",
+    maxFileSizeMB: 10,
+    maxBatchSize: 20,
+    searchVolume: 250000,
+    relatedTools: ["png-to-jpg", "image-to-webp", "jpg-to-png", "image-resizer"],
+    howToSteps: [
+      "Upload your SVG files by dropping them onto the area or clicking to browse.",
+      "Set your desired output width in pixels (height scales automatically).",
+      "Click 'Convert to PNG' and download your rasterized images.",
+    ],
+    faqs: [
+      {
+        question: "What resolution will the PNG be?",
+        answer:
+          "By default we render at 2× the SVG's viewBox dimensions for a sharp result. You can set a custom width before converting.",
+      },
+      {
+        question: "Will SVG transparency be preserved in PNG?",
+        answer:
+          "Yes. PNG supports alpha transparency, so transparent SVG backgrounds remain transparent.",
+      },
+      {
+        question: "Can I convert multiple SVG files at once?",
+        answer: "Yes, up to 20 SVG files simultaneously.",
+      },
+      {
+        question: "Is this converter free?",
+        answer: "100% free. No account, no upload, no watermarks.",
+      },
+      {
+        question: "Why convert SVG to PNG?",
+        answer:
+          "SVG is not accepted by many platforms (Twitter, Instagram, Slack, email). PNG is universally supported.",
+      },
+    ],
+  },
+  {
+    id: "gif-to-png",
+    category: "image",
+    slug: "/image/gif-to-png",
+    title: "GIF to PNG Converter – Free Online, No Upload",
+    headline: "Convert GIF to PNG Free Online",
+    description:
+      "Convert GIF to PNG online for free. Extracts the first frame as a high-quality lossless PNG. No upload needed — runs in your browser. Free GIF to PNG conversion.",
+    longDescription:
+      "Our free GIF to PNG converter extracts the first frame of your GIF and exports it as a lossless PNG image directly in your browser. This is perfect for getting a clean thumbnail from a GIF, removing animation, or converting a static GIF logo to a more compatible format. No file is ever uploaded. Batch convert up to 20 GIF files to PNG at once.",
+    actionVerb: "convert GIF to PNG",
+    keywords: [
+      "gif to png",
+      "gif to png converter",
+      "convert gif to png",
+      "gif to png online",
+      "gif to png free",
+      "convert gif to png online free",
+      "gif png converter",
+      "gif to image",
+      "change gif to png",
+    ],
+    inputFormats: ["image/gif"],
+    outputFormat: "image/png",
+    outputExtension: "png",
+    maxFileSizeMB: 20,
+    maxBatchSize: 20,
+    searchVolume: 120000,
+    relatedTools: ["image-to-webp", "png-to-jpg", "jpg-to-png", "image-compressor"],
+    howToSteps: [
+      "Upload your GIF files onto the drop zone.",
+      "The converter extracts the first frame of each GIF automatically.",
+      "Download your PNG images individually or as a ZIP.",
+    ],
+    faqs: [
+      {
+        question: "Does this convert the entire GIF animation?",
+        answer:
+          "No. The converter extracts the first frame as a static PNG. Full animated GIF to animated WebP conversion is coming soon.",
+      },
+      {
+        question: "Will transparency in the GIF be preserved?",
+        answer:
+          "Yes. If the GIF has a transparent background, the PNG output will also be transparent.",
+      },
+      {
+        question: "Is this tool free?",
+        answer: "100% free. No sign-up required.",
+      },
+      {
+        question: "Can I batch convert GIF files?",
+        answer: "Yes, up to 20 files at once.",
+      },
+    ],
+  },
+  {
+    id: "image-cropper",
+    category: "image",
+    slug: "/image/image-cropper",
+    title: "Image Cropper – Crop Images Online Free",
+    headline: "Crop Images Online Free — Any Size or Ratio",
+    description:
+      "Crop images online for free. Set any size or aspect ratio (1:1, 16:9, 4:3). No upload needed — works entirely in your browser. Free online image cropping tool.",
+    longDescription:
+      "Our free online image cropper lets you visually select any region of your photo and export it at full quality. Lock to common aspect ratios like 1:1 (square), 16:9 (widescreen), 4:3, or 9:16 (portrait/mobile). Output in JPG, PNG, or WebP. No file is ever uploaded — everything runs locally in your browser using the Canvas API.",
+    actionVerb: "crop images",
+    keywords: [
+      "image cropper",
+      "crop image",
+      "crop image online",
+      "crop image free",
+      "image crop tool",
+      "online image cropper",
+      "photo crop online",
+      "crop photo online free",
+      "crop jpg online",
+      "crop png online",
+      "image crop online free",
+    ],
+    inputFormats: ["image/jpeg", "image/png", "image/webp"],
+    outputFormat: "image/jpeg",
+    outputExtension: "jpg",
+    maxFileSizeMB: 50,
+    maxBatchSize: 1,
+    searchVolume: 450000,
+    relatedTools: ["image-resizer", "image-compressor", "jpg-to-png", "image-to-webp"],
+    howToSteps: [
+      "Upload an image by dropping it onto the crop tool.",
+      "Drag the crop handles to select your desired region. Optionally lock an aspect ratio.",
+      "Click 'Crop & Download' to save your cropped image.",
+    ],
+    faqs: [
+      {
+        question: "What aspect ratios are supported?",
+        answer:
+          "Free crop (any ratio), 1:1 (square), 16:9 (widescreen), 4:3 (standard), 3:2 (photo print), and 9:16 (portrait/mobile).",
+      },
+      {
+        question: "What output format is used?",
+        answer:
+          "JPG by default. You can switch to PNG (for transparency) or WebP (for smaller size) before downloading.",
+      },
+      {
+        question: "Is the cropper free?",
+        answer: "Yes, completely free. No account needed.",
+      },
+      {
+        question: "Do files get uploaded?",
+        answer:
+          "No. The cropper runs entirely in your browser using Canvas API. Your image never leaves your device.",
+      },
+      {
+        question: "Can I crop multiple images at once?",
+        answer:
+          "The cropper works on one image at a time for precise control. For batch resizing use the Image Resizer tool.",
+      },
+    ],
+  },
+];
+
+export const allTools: ToolConfig[] = [...imageTools];
+
+export function getToolById(id: string): ToolConfig | undefined {
+  return allTools.find((t) => t.id === id);
+}
+
+export function getRelatedTools(tool: ToolConfig): ToolConfig[] {
+  return tool.relatedTools
+    .map((id) => getToolById(id))
+    .filter(Boolean) as ToolConfig[];
+}
+
+export function getToolsByCategory(category: ToolCategory): ToolConfig[] {
+  return allTools.filter((t) => t.category === category && !t.comingSoon);
+}
