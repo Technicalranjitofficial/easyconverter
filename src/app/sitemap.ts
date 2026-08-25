@@ -8,14 +8,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: baseUrl,                    lastModified: now, changeFrequency: "weekly",  priority: 1.0  },
-    { url: `${baseUrl}/image`,         lastModified: now, changeFrequency: "weekly",  priority: 0.95 },
-    { url: `${baseUrl}/pdf`,           lastModified: now, changeFrequency: "weekly",  priority: 0.95 },
-    { url: `${baseUrl}/about`,         lastModified: now, changeFrequency: "monthly", priority: 0.5  },
-    { url: `${baseUrl}/contact`,       lastModified: now, changeFrequency: "monthly", priority: 0.4  },
-    { url: `${baseUrl}/privacy`,       lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
-    { url: `${baseUrl}/terms`,         lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
-    { url: `${baseUrl}/cookies`,       lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
+    { url: baseUrl,                     lastModified: now, changeFrequency: "weekly",  priority: 1.0  },
+    { url: `${baseUrl}/image`,          lastModified: now, changeFrequency: "weekly",  priority: 0.95 },
+    { url: `${baseUrl}/pdf`,            lastModified: now, changeFrequency: "weekly",  priority: 0.95 },
+    { url: `${baseUrl}/text`,           lastModified: now, changeFrequency: "weekly",  priority: 0.9  },
+    { url: `${baseUrl}/unit`,           lastModified: now, changeFrequency: "weekly",  priority: 0.9  },
+    { url: `${baseUrl}/utilities`,      lastModified: now, changeFrequency: "weekly",  priority: 0.9  },
+    { url: `${baseUrl}/data`,           lastModified: now, changeFrequency: "weekly",  priority: 0.9  },
+    { url: `${baseUrl}/code`,           lastModified: now, changeFrequency: "weekly",  priority: 0.9  },
+    { url: `${baseUrl}/document`,       lastModified: now, changeFrequency: "weekly",  priority: 0.85 },
+    { url: `${baseUrl}/about`,          lastModified: now, changeFrequency: "monthly", priority: 0.5  },
+    { url: `${baseUrl}/contact`,        lastModified: now, changeFrequency: "monthly", priority: 0.4  },
+    { url: `${baseUrl}/privacy`,        lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
+    { url: `${baseUrl}/terms`,          lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
+    { url: `${baseUrl}/cookies`,        lastModified: now, changeFrequency: "yearly",  priority: 0.3  },
   ];
 
   const toolPages: MetadataRoute.Sitemap = allTools

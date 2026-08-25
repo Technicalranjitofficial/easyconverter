@@ -4,9 +4,68 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown, Zap, ArrowRight,
          RefreshCw, Minimize2, FileImage, Layers, Video,
-         FileText, Scissors, RotateCw, Hash } from "lucide-react";
+         FileText, Scissors, RotateCw, Hash,
+         Type, Scale, Wrench, Database, Code2, FileOutput } from "lucide-react";
 import Logo from "./Logo";
-import { imageTools, pdfTools } from "@/config/tools";
+import { imageTools, pdfTools, textTools, unitTools, utilityTools, dataTools, codeTools, documentTools } from "@/config/tools";
+
+// Simple generic dropdown config for non-mega menus
+const SIMPLE_CATEGORIES = [
+  {
+    label: "Text Tools",
+    href: "/text",
+    icon: Type,
+    color: "text-indigo-500",
+    dot: "bg-indigo-400",
+    hoverColor: "hover:text-indigo-700 hover:bg-indigo-50/70",
+    tools: textTools,
+  },
+  {
+    label: "Unit Converters",
+    href: "/unit",
+    icon: Scale,
+    color: "text-emerald-500",
+    dot: "bg-emerald-400",
+    hoverColor: "hover:text-emerald-700 hover:bg-emerald-50/70",
+    tools: unitTools,
+  },
+  {
+    label: "Utilities",
+    href: "/utilities",
+    icon: Wrench,
+    color: "text-amber-500",
+    dot: "bg-amber-400",
+    hoverColor: "hover:text-amber-700 hover:bg-amber-50/70",
+    tools: utilityTools,
+  },
+  {
+    label: "Data Tools",
+    href: "/data",
+    icon: Database,
+    color: "text-sky-500",
+    dot: "bg-sky-400",
+    hoverColor: "hover:text-sky-700 hover:bg-sky-50/70",
+    tools: dataTools,
+  },
+  {
+    label: "Dev Tools",
+    href: "/code",
+    icon: Code2,
+    color: "text-violet-500",
+    dot: "bg-violet-400",
+    hoverColor: "hover:text-violet-700 hover:bg-violet-50/70",
+    tools: codeTools,
+  },
+  {
+    label: "Document",
+    href: "/document",
+    icon: FileOutput,
+    color: "text-rose-500",
+    dot: "bg-rose-400",
+    hoverColor: "hover:text-rose-700 hover:bg-rose-50/70",
+    tools: documentTools,
+  },
+];
 
 // ── Categorise all image tools for the mega-menu ─────────────────────────────
 
@@ -49,6 +108,58 @@ const imageToolGroups = [
 const comingSoonGroups = [
   { label: "Video Tools", icon: Video,   count: 6  },
 ];
+
+// ── Simple category dropdown component ───────────────────────────────────────
+function SimpleCatDropdown({ cat }: { cat: typeof SIMPLE_CATEGORIES[0] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const Icon = cat.icon;
+
+  const show = () => { if (timer.current) clearTimeout(timer.current); setOpen(true); };
+  const hide = () => { timer.current = setTimeout(() => setOpen(false), 120); };
+
+  return (
+    <div ref={ref} className="relative" onMouseEnter={show} onMouseLeave={hide}>
+      <button onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+        {cat.label}
+        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 pt-2 w-56 animate-scale-in z-50"
+          onMouseEnter={show} onMouseLeave={hide}>
+          <div className="bg-white rounded-2xl shadow-2xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900">
+              <div className="flex items-center gap-2">
+                <div className={`w-1.5 h-1.5 rounded-full ${cat.dot}`} />
+                <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">{cat.tools.length} tools</span>
+              </div>
+              <Link href={cat.href} className={`text-xs font-medium ${cat.color} hover:opacity-80 flex items-center gap-1`} onClick={() => setOpen(false)}>
+                All <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+            <div className="py-2 max-h-72 overflow-y-auto">
+              {cat.tools.slice(0, 12).map(tool => (
+                <Link key={tool.id} href={tool.slug} onClick={() => setOpen(false)}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm text-slate-600 ${cat.hoverColor} transition-all group/item`}>
+                  <span className={`w-1 h-1 rounded-full bg-slate-300 group-hover/item:${cat.dot} transition-colors flex-shrink-0`} />
+                  <span className="font-medium truncate">{tool.headline || tool.title.split("–")[0].trim()}</span>
+                </Link>
+              ))}
+              {cat.tools.length > 12 && (
+                <Link href={cat.href} onClick={() => setOpen(false)}
+                  className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold ${cat.color} hover:opacity-80 transition-all`}>
+                  +{cat.tools.length - 12} more tools <ArrowRight className="w-3 h-3" />
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen]   = useState(false);
@@ -279,6 +390,11 @@ export default function Navbar() {
               </div>
             )}
           </div>
+
+          {/* 6 new category dropdowns */}
+          {SIMPLE_CATEGORIES.map(cat => (
+            <SimpleCatDropdown key={cat.label} cat={cat} />
+          ))}
 
           {/* Placeholder nav items */}
           {["Video Tools"].map((label) => (
