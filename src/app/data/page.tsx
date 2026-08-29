@@ -6,7 +6,7 @@ import { dataTools } from "@/config/tools";
 export const metadata: Metadata = {
   title: "Free Online Data Tools – JSON, CSV, XML, YAML Converters | EasyConverter.io",
   description: "14 free data conversion tools: JSON formatter, CSV↔JSON, JSON↔XML, YAML, TSV, Excel to JSON, TypeScript generator, JSON diff, table view and more.",
-  alternates: { canonical: "https://easyconverter.io/data" },
+  alternates: { canonical: "https://www.easyconverter.io/data" },
 };
 
 export default function DataToolsPage() {

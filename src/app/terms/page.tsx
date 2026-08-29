@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Terms of Service – EasyConverter.io",
   description:
     "Terms of service for EasyConverter.io. Free to use, no account required. Read our usage terms and limitations.",
-  alternates: { canonical: "https://easyconverter.io/terms" },
+  alternates: { canonical: "https://www.easyconverter.io/terms" },
 };
 
 const sections = [

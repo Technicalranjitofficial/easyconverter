@@ -6,7 +6,7 @@ import { codeTools } from "@/config/tools";
 export const metadata: Metadata = {
   title: "Free Online Developer Tools – HTML, CSS, JS, SQL Formatters | EasyConverter.io",
   description: "13 free developer tools: HTML/CSS/JS formatter, HTML→JSX, SQL formatter, CSS to Tailwind, autoprefixer, color converter, meta tags generator, robots.txt, .htaccess generator.",
-  alternates: { canonical: "https://easyconverter.io/code" },
+  alternates: { canonical: "https://www.easyconverter.io/code" },
 };
 
 export default function CodeToolsPage() {

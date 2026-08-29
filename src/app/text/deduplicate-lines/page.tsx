@@ -8,8 +8,8 @@ const tool = getToolById("deduplicate-lines")!;
 export const metadata: Metadata = {
   title: "Remove Duplicate Lines Online Free | EasyConverter.io",
   description: "Remove duplicate lines from text online for free. Case-sensitive option. No upload needed.",
-  alternates: { canonical: "https://easyconverter.io/text/deduplicate-lines" },
-  openGraph: { title: "Remove Duplicate Lines Online Free", description: "Remove duplicate lines from text online for free. Case-sensitive option. No upload needed.", url: "https://easyconverter.io/text/deduplicate-lines", siteName: "EasyConverter.io", type: "website" },
+  alternates: { canonical: "https://www.easyconverter.io/text/deduplicate-lines" },
+  openGraph: { title: "Remove Duplicate Lines Online Free", description: "Remove duplicate lines from text online for free. Case-sensitive option. No upload needed.", url: "https://www.easyconverter.io/text/deduplicate-lines", siteName: "EasyConverter.io", type: "website" },
 };
 
 export default function DeduplicatePage() {

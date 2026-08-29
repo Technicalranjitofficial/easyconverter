@@ -5,7 +5,7 @@ interface ToolSchemasProps {
 }
 
 export default function ToolSchemas({ tool }: ToolSchemasProps) {
-  const baseUrl = "https://easyconverter.io";
+  const baseUrl = "https://www.easyconverter.io";
   const toolUrl = `${baseUrl}${tool.slug}`;
 
   const webApp = {

@@ -6,7 +6,7 @@ import { documentTools } from "@/config/tools";
 export const metadata: Metadata = {
   title: "Free Online Document Tools – HTML to PDF, Text to PDF, Markdown | EasyConverter.io",
   description: "6 free document tools: HTML to PDF, text to PDF, HTML↔Markdown converter, PDF page counter, DOCX to TXT, image flip & rotate.",
-  alternates: { canonical: "https://easyconverter.io/document" },
+  alternates: { canonical: "https://www.easyconverter.io/document" },
 };
 
 export default function DocumentToolsPage() {

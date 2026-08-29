@@ -6,7 +6,7 @@ import { unitTools } from "@/config/tools";
 export const metadata: Metadata = {
   title: "Free Online Unit Converter Tools – Length, Weight, Temperature | EasyConverter.io",
   description: "15 free online unit converter tools. Length, weight, temperature, speed, data storage, area, volume, time, fuel economy, pressure, energy, power, frequency, angle and resolution.",
-  alternates: { canonical: "https://easyconverter.io/unit" },
+  alternates: { canonical: "https://www.easyconverter.io/unit" },
 };
 
 export default function UnitToolsPage() {

@@ -9,20 +9,20 @@ export const metadata: Metadata = {
   title: `${tool.title} – Reduce Image Size Free | EasyConverter.io`,
   description: tool.description,
   keywords: tool.keywords.join(", "),
-  alternates: { canonical: `https://easyconverter.io${tool.slug}` },
+  alternates: { canonical: `https://www.easyconverter.io${tool.slug}` },
   openGraph: {
     title: `${tool.title} – Free Online | EasyConverter.io`,
     description: tool.description,
-    url: `https://easyconverter.io${tool.slug}`,
+    url: `https://www.easyconverter.io${tool.slug}`,
     siteName: "EasyConverter.io",
     type: "website",
-    images: [{ url: "https://easyconverter.io/og-default.png", width: 1200, height: 630, alt: tool.title }],
+    images: [{ url: "https://www.easyconverter.io/og-default.png", width: 1200, height: 630, alt: tool.title }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${tool.title} – Free Online`,
     description: tool.description,
-    images: ["https://easyconverter.io/og-default.png"],
+    images: ["https://www.easyconverter.io/og-default.png"],
   },
 };
 

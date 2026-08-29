@@ -10,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: "https://easyconverter.io/sitemap.xml",
-    host: "https://easyconverter.io",
+    sitemap: "https://www.easyconverter.io/sitemap.xml",
+    host: "https://www.easyconverter.io",
   };
 }

@@ -7,7 +7,7 @@ const tool = getToolById("unit-speed")!;
 export const metadata: Metadata = {
   title: "Speed Converter – km/h, mph, m/s Online Free | EasyConverter.io",
   description: "Convert speed units: km/h, mph, m/s, knots and more. Free online speed converter.",
-  alternates: { canonical: "https://easyconverter.io/unit/speed" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/speed" },
 };
 
 export default function SpeedConverterPage() {

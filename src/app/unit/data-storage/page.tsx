@@ -7,7 +7,7 @@ const tool = getToolById("unit-data-storage")!;
 export const metadata: Metadata = {
   title: "Data Storage Converter – KB, MB, GB, TB Online Free | EasyConverter.io",
   description: "Convert data storage units: bits, bytes, KB, MB, GB, TB, PB. Free online data storage converter.",
-  alternates: { canonical: "https://easyconverter.io/unit/data-storage" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/data-storage" },
 };
 
 export default function DataStorageConverterPage() {

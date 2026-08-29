@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://easyconverter.io"),
+  metadataBase: new URL("https://www.easyconverter.io"),
   title: {
     default: "EasyConverter.io – Free Online File Converter | JPG PNG WebP",
     template: "%s | EasyConverter.io",

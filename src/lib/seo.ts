@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ToolConfig } from "@/config/tools";
 
-const BASE_URL = "https://easyconverter.io";
+const BASE_URL = "https://www.easyconverter.io";
 const OG_IMAGE = `${BASE_URL}/og-default.png`;
 const SITE_NAME = "EasyConverter.io";
 

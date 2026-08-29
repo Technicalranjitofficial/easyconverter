@@ -6,7 +6,7 @@ import { utilityTools } from "@/config/tools";
 export const metadata: Metadata = {
   title: "Free Online Utility Tools – QR Code, Password, Hash, Calculator | EasyConverter.io",
   description: "14 free online utility tools: QR code generator, password generator, UUID, Base64, URL encoder, hash generator, regex tester, BMI, EMI, age, GST, percentage calculators.",
-  alternates: { canonical: "https://easyconverter.io/utilities" },
+  alternates: { canonical: "https://www.easyconverter.io/utilities" },
 };
 
 export default function UtilityToolsPage() {

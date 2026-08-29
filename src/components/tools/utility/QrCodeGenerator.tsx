@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Download, QrCode, RefreshCw } from "lucide-react";
 
 export default function QrCodeGenerator() {
-  const [text, setText]     = useState("https://easyconverter.io");
+  const [text, setText]     = useState("https://www.easyconverter.io");
   const [size, setSize]     = useState(256);
   const [fg, setFg]         = useState("#000000");
   const [bg, setBg]         = useState("#ffffff");

@@ -8,11 +8,11 @@ export const metadata: Metadata = {
   description:
     "Free online PDF tools. Merge PDFs, split PDF, compress PDF, rotate pages, convert PDF to JPG/PNG, add watermarks and page numbers. No upload — 100% browser-based.",
   keywords: "merge pdf, split pdf, compress pdf, rotate pdf, pdf to jpg, pdf to png, pdf tools online free",
-  alternates: { canonical: "https://easyconverter.io/pdf" },
+  alternates: { canonical: "https://www.easyconverter.io/pdf" },
   openGraph: {
     title: "Free Online PDF Tools | EasyConverter.io",
     description: "8 free PDF tools — merge, split, compress, rotate, convert, watermark. No upload, no account.",
-    url: "https://easyconverter.io/pdf",
+    url: "https://www.easyconverter.io/pdf",
     siteName: "EasyConverter.io",
     type: "website",
   },

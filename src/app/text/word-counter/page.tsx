@@ -8,8 +8,8 @@ const tool = getToolById("word-counter")!;
 export const metadata: Metadata = {
   title: "Word Counter – Count Words, Characters & Lines Online Free | EasyConverter.io",
   description: "Count words, characters, lines, sentences, paragraphs and reading time instantly. Free online word counter.",
-  alternates: { canonical: "https://easyconverter.io/text/word-counter" },
-  openGraph: { title: "Word Counter – Count Words, Characters & Lines Online Free", description: "Count words, characters, lines, sentences, paragraphs and reading time instantly. Free online word counter.", url: "https://easyconverter.io/text/word-counter", siteName: "EasyConverter.io", type: "website" },
+  alternates: { canonical: "https://www.easyconverter.io/text/word-counter" },
+  openGraph: { title: "Word Counter – Count Words, Characters & Lines Online Free", description: "Count words, characters, lines, sentences, paragraphs and reading time instantly. Free online word counter.", url: "https://www.easyconverter.io/text/word-counter", siteName: "EasyConverter.io", type: "website" },
 };
 
 export default function WordCounter() {

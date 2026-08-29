@@ -8,8 +8,8 @@ const tool = getToolById("lorem-ipsum")!;
 export const metadata: Metadata = {
   title: "Lorem Ipsum Generator – Generate Placeholder Text Free Online | EasyConverter.io",
   description: "Generate Lorem Ipsum placeholder text online free. Choose paragraphs and sentence count. No upload needed.",
-  alternates: { canonical: "https://easyconverter.io/text/lorem-ipsum" },
-  openGraph: { title: "Lorem Ipsum Generator – Generate Placeholder Text Free Online", description: "Generate Lorem Ipsum placeholder text online free. Choose paragraphs and sentence count. No upload needed.", url: "https://easyconverter.io/text/lorem-ipsum", siteName: "EasyConverter.io", type: "website" },
+  alternates: { canonical: "https://www.easyconverter.io/text/lorem-ipsum" },
+  openGraph: { title: "Lorem Ipsum Generator – Generate Placeholder Text Free Online", description: "Generate Lorem Ipsum placeholder text online free. Choose paragraphs and sentence count. No upload needed.", url: "https://www.easyconverter.io/text/lorem-ipsum", siteName: "EasyConverter.io", type: "website" },
 };
 
 export default function LoremIpsumPage() {

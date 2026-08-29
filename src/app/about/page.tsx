@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "About EasyConverter.io – Free, Private File Conversion",
   description:
     "Learn why EasyConverter.io was built — a 100% browser-based file conversion tool that respects your privacy and never uploads your files.",
-  alternates: { canonical: "https://easyconverter.io/about" },
+  alternates: { canonical: "https://www.easyconverter.io/about" },
 };
 
 const sections = [

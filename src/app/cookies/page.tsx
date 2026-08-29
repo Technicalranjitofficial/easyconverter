@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Cookie Policy – EasyConverter.io",
   description:
     "EasyConverter.io cookie policy. Learn which cookies we use, why, and how to control them.",
-  alternates: { canonical: "https://easyconverter.io/cookies" },
+  alternates: { canonical: "https://www.easyconverter.io/cookies" },
 };
 
 const sections = [

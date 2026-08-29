@@ -6,7 +6,7 @@ import { textTools } from "@/config/tools";
 export const metadata: Metadata = {
   title: "Free Online Text Tools – Word Counter, Case Converter, Lorem Ipsum | EasyConverter.io",
   description: "13 free online text tools. Word counter, case converter, Lorem ipsum generator, find & replace, diff checker, readability score, markdown preview and more. No upload.",
-  alternates: { canonical: "https://easyconverter.io/text" },
+  alternates: { canonical: "https://www.easyconverter.io/text" },
 };
 
 export default function TextToolsPage() {

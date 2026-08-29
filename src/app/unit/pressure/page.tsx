@@ -7,7 +7,7 @@ const tool = getToolById("unit-pressure")!;
 export const metadata: Metadata = {
   title: "Pressure Converter – PSI, Bar, Pascal, ATM Online | EasyConverter.io",
   description: "Convert pressure units: PSI, bar, pascal, atm, kPa and more. Free online pressure converter.",
-  alternates: { canonical: "https://easyconverter.io/unit/pressure" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/pressure" },
 };
 
 export default function PressureConverterPage() {

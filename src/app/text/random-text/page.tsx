@@ -8,8 +8,8 @@ const tool = getToolById("random-text")!;
 export const metadata: Metadata = {
   title: "Random Text Generator – Generate Random Words Online Free | EasyConverter.io",
   description: "Generate random text online for free. Set word count. No upload needed.",
-  alternates: { canonical: "https://easyconverter.io/text/random-text" },
-  openGraph: { title: "Random Text Generator – Generate Random Words Online Free", description: "Generate random text online for free. Set word count. No upload needed.", url: "https://easyconverter.io/text/random-text", siteName: "EasyConverter.io", type: "website" },
+  alternates: { canonical: "https://www.easyconverter.io/text/random-text" },
+  openGraph: { title: "Random Text Generator – Generate Random Words Online Free", description: "Generate random text online for free. Set word count. No upload needed.", url: "https://www.easyconverter.io/text/random-text", siteName: "EasyConverter.io", type: "website" },
 };
 
 export default function RandomTextPage() {
