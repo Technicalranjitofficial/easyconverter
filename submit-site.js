@@ -10,7 +10,7 @@
  */
 
 const BASE_URL     = "https://www.easyconverter.io";
-const INDEX_KEY    = "easyconverter2026indexnow";
+const INDEX_KEY    = process.argv[2] || "easyconverter2026indexnow";
 const KEY_LOCATION = `${BASE_URL}/${INDEX_KEY}.txt`;
 
 /* ── All URLs (mirrors sitemap.ts logic — no need to run Next.js) ───── */
@@ -201,7 +201,9 @@ async function main() {
   console.log(`\n${B}${C}╔══════════════════════════════════════════════╗${X}`);
   console.log(`${B}${C}║   EasyConverter.io — Site Submission Script  ║${X}`);
   console.log(`${B}${C}╚══════════════════════════════════════════════╝${X}`);
-  console.log(`${D}  Submitting ${ALL_URLS.length} URLs · ${BASE_URL}${X}\n`);
+  console.log(`${D}  Submitting ${ALL_URLS.length} URLs · ${BASE_URL}${X}`);
+  console.log(`${D}  IndexNow key: ${INDEX_KEY}${X}`);
+  console.log(`${D}  Key file:     ${KEY_LOCATION}${X}\n`);
 
   const healthy = await checkHealth();
   if (!healthy) {
