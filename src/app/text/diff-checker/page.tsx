@@ -8,7 +8,7 @@ const tool = getToolById("diff-checker")!;
 export const metadata: Metadata = {
   title: "Text Diff Checker – Compare Two Texts Online Free | EasyConverter.io",
   description: "Compare two texts and see the differences highlighted online free. No upload needed.",
-  alternates: { canonical: "https://www.easyconverter.io/text/diff-checker" },
+  alternates: { canonical: "https://www.easyconverter.io/text/diff-checker/" },
   openGraph: { title: "Text Diff Checker – Compare Two Texts Online Free", description: "Compare two texts and see the differences highlighted online free. No upload needed.", url: "https://www.easyconverter.io/text/diff-checker", siteName: "EasyConverter.io", type: "website" },
 };
 

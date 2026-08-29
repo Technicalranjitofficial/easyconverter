@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Scale, CheckCircle2 } from "lucide-react";
 import { unitTools } from "@/config/tools";
+import { unitPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Online Unit Converter Tools – Length, Weight, Temperature | EasyConverter.io",
-  description: "15 free online unit converter tools. Length, weight, temperature, speed, data storage, area, volume, time, fuel economy, pressure, energy, power, frequency, angle and resolution.",
-  alternates: { canonical: "https://www.easyconverter.io/unit" },
-};
+export const metadata: Metadata = unitPageMetadata;
 
 export default function UnitToolsPage() {
   return (

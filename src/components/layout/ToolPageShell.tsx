@@ -19,8 +19,21 @@ const trustItems = [
   { icon: Star,   text: "100% free" },
 ];
 
+/** Maps tool.category → human label + href */
+const CATEGORY_META: Record<string, { label: string; href: string }> = {
+  image:     { label: "Image Tools",    href: "/image"     },
+  pdf:       { label: "PDF Tools",      href: "/pdf"       },
+  text:      { label: "Text Tools",     href: "/text"      },
+  unit:      { label: "Unit Converters",href: "/unit"      },
+  utilities: { label: "Utilities",      href: "/utilities" },
+  data:      { label: "Data Tools",     href: "/data"      },
+  code:      { label: "Code Tools",     href: "/code"      },
+  document:  { label: "Document Tools", href: "/document"  },
+};
+
 export default function ToolPageShell({ tool, children }: ToolPageShellProps) {
   const relatedTools = getRelatedTools(tool);
+  const cat = CATEGORY_META[tool.category] ?? { label: "Tools", href: "/" };
 
   return (
     <>
@@ -35,7 +48,7 @@ export default function ToolPageShell({ tool, children }: ToolPageShellProps) {
                className="flex items-center gap-1 text-xs text-slate-400 mb-6">
             <Link href="/" className="hover:text-indigo-500 transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3 flex-shrink-0" />
-            <Link href="/image" className="hover:text-indigo-500 transition-colors">Image Tools</Link>
+            <Link href={cat.href} className="hover:text-indigo-500 transition-colors">{cat.label}</Link>
             <ChevronRight className="w-3 h-3 flex-shrink-0" />
             <span className="text-slate-500 font-medium">{tool.title}</span>
           </nav>

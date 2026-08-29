@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Database, CheckCircle2 } from "lucide-react";
 import { dataTools } from "@/config/tools";
+import { dataPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Online Data Tools – JSON, CSV, XML, YAML Converters | EasyConverter.io",
-  description: "14 free data conversion tools: JSON formatter, CSV↔JSON, JSON↔XML, YAML, TSV, Excel to JSON, TypeScript generator, JSON diff, table view and more.",
-  alternates: { canonical: "https://www.easyconverter.io/data" },
-};
+export const metadata: Metadata = dataPageMetadata;
 
 export default function DataToolsPage() {
   return (

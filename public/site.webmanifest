@@ -1,0 +1,17 @@
+{
+  "name": "EasyConverter.io",
+  "short_name": "EasyConverter",
+  "description": "Free online file converter tools — images, PDFs, text and more. 100% browser-based.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}

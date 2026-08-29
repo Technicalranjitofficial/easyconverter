@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Contact Us – EasyConverter.io",
   description:
     "Get in touch with the EasyConverter.io team. Report bugs, request new tools, or ask about partnerships.",
-  alternates: { canonical: "https://www.easyconverter.io/contact" },
+  alternates: { canonical: "https://www.easyconverter.io/contact/" },
 };
 
 const reasons = [

@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, FileOutput, CheckCircle2 } from "lucide-react";
 import { documentTools } from "@/config/tools";
+import { documentPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Online Document Tools – HTML to PDF, Text to PDF, Markdown | EasyConverter.io",
-  description: "6 free document tools: HTML to PDF, text to PDF, HTML↔Markdown converter, PDF page counter, DOCX to TXT, image flip & rotate.",
-  alternates: { canonical: "https://www.easyconverter.io/document" },
-};
+export const metadata: Metadata = documentPageMetadata;
 
 export default function DocumentToolsPage() {
   return (

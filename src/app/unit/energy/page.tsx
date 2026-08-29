@@ -7,7 +7,7 @@ const tool = getToolById("unit-energy")!;
 export const metadata: Metadata = {
   title: "Energy Converter – Joules, Calories, kWh, BTU Free | EasyConverter.io",
   description: "Convert energy units: joules, calories, kWh, BTU and more. Free online energy converter.",
-  alternates: { canonical: "https://www.easyconverter.io/unit/energy" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/energy/" },
 };
 
 export default function EnergyConverterPage() {

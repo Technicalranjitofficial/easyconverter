@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Type, CheckCircle2 } from "lucide-react";
 import { textTools } from "@/config/tools";
+import { textPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Online Text Tools – Word Counter, Case Converter, Lorem Ipsum | EasyConverter.io",
-  description: "13 free online text tools. Word counter, case converter, Lorem ipsum generator, find & replace, diff checker, readability score, markdown preview and more. No upload.",
-  alternates: { canonical: "https://www.easyconverter.io/text" },
-};
+export const metadata: Metadata = textPageMetadata;
 
 export default function TextToolsPage() {
   return (

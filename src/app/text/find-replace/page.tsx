@@ -8,7 +8,7 @@ const tool = getToolById("find-replace")!;
 export const metadata: Metadata = {
   title: "Find and Replace Text Online – Free Text Find & Replace Tool | EasyConverter.io",
   description: "Find and replace text online for free. Supports regex, case-sensitive matching. No upload needed.",
-  alternates: { canonical: "https://www.easyconverter.io/text/find-replace" },
+  alternates: { canonical: "https://www.easyconverter.io/text/find-replace/" },
   openGraph: { title: "Find and Replace Text Online – Free Text Find & Replace Tool", description: "Find and replace text online for free. Supports regex, case-sensitive matching. No upload needed.", url: "https://www.easyconverter.io/text/find-replace", siteName: "EasyConverter.io", type: "website" },
 };
 

@@ -7,7 +7,7 @@ const tool = getToolById("unit-power")!;
 export const metadata: Metadata = {
   title: "Power Converter – Watts, kW, Horsepower Online Free | EasyConverter.io",
   description: "Convert power units: watts, kilowatts, horsepower, BTU/hour. Free online power converter.",
-  alternates: { canonical: "https://www.easyconverter.io/unit/power" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/power/" },
 };
 
 export default function PowerConverterPage() {

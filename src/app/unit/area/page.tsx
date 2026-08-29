@@ -7,7 +7,7 @@ const tool = getToolById("unit-area")!;
 export const metadata: Metadata = {
   title: "Area Converter – sq ft, sq m, acres, hectares Free | EasyConverter.io",
   description: "Convert area units: sq metres, sq feet, acres, hectares and more. Free online area converter.",
-  alternates: { canonical: "https://www.easyconverter.io/unit/area" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/area/" },
 };
 
 export default function AreaConverterPage() {

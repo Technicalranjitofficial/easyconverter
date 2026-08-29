@@ -1,4 +1,4 @@
-export type ToolCategory = "image" | "pdf" | "video" | "audio" | "unit" | "code";
+export type ToolCategory = "image" | "pdf" | "video" | "audio" | "unit" | "code" | "text" | "utilities" | "data" | "document";
 export type ImageOutputFormat = "image/jpeg" | "image/png" | "image/webp";
 
 export interface FAQ {

@@ -7,7 +7,7 @@ const tool = getToolById("unit-temperature")!;
 export const metadata: Metadata = {
   title: "Temperature Converter – °C, °F, Kelvin Online Free | EasyConverter.io",
   description: "Convert temperature: Celsius to Fahrenheit, Kelvin and more. Free online temperature converter.",
-  alternates: { canonical: "https://www.easyconverter.io/unit/temperature" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/temperature/" },
 };
 
 export default function TemperatureConverterPage() {

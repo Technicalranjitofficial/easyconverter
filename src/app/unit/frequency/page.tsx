@@ -7,7 +7,7 @@ const tool = getToolById("unit-frequency")!;
 export const metadata: Metadata = {
   title: "Frequency Converter – Hz, kHz, MHz, GHz Online Free | EasyConverter.io",
   description: "Convert frequency units: Hz, kHz, MHz, GHz, RPM. Free online frequency converter.",
-  alternates: { canonical: "https://www.easyconverter.io/unit/frequency" },
+  alternates: { canonical: "https://www.easyconverter.io/unit/frequency/" },
 };
 
 export default function FrequencyConverterPage() {

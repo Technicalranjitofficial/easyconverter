@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Privacy Policy – EasyConverter.io",
   description:
     "EasyConverter.io privacy policy. Your files never leave your browser. We explain exactly what data we collect and how we use it.",
-  alternates: { canonical: "https://www.easyconverter.io/privacy" },
+  alternates: { canonical: "https://www.easyconverter.io/privacy/" },
 };
 
 const sections = [

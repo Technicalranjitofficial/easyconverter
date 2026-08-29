@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Code2, CheckCircle2 } from "lucide-react";
 import { codeTools } from "@/config/tools";
+import { codePageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Online Developer Tools – HTML, CSS, JS, SQL Formatters | EasyConverter.io",
-  description: "13 free developer tools: HTML/CSS/JS formatter, HTML→JSX, SQL formatter, CSS to Tailwind, autoprefixer, color converter, meta tags generator, robots.txt, .htaccess generator.",
-  alternates: { canonical: "https://www.easyconverter.io/code" },
-};
+export const metadata: Metadata = codePageMetadata;
 
 export default function CodeToolsPage() {
   return (

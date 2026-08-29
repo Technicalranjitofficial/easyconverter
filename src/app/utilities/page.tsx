@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Wrench, CheckCircle2 } from "lucide-react";
 import { utilityTools } from "@/config/tools";
+import { utilitiesPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Online Utility Tools – QR Code, Password, Hash, Calculator | EasyConverter.io",
-  description: "14 free online utility tools: QR code generator, password generator, UUID, Base64, URL encoder, hash generator, regex tester, BMI, EMI, age, GST, percentage calculators.",
-  alternates: { canonical: "https://www.easyconverter.io/utilities" },
-};
+export const metadata: Metadata = utilitiesPageMetadata;
 
 export default function UtilityToolsPage() {
   return (
