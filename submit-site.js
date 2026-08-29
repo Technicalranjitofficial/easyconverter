@@ -10,7 +10,7 @@
  */
 
 const BASE_URL     = "https://www.easyconverter.io";
-const INDEX_KEY    = process.argv[2] || "easyconverter2026indexnow";
+const INDEX_KEY    = process.argv[2] || "f17421dc0c1e4a068dc081207d4120eb";
 const KEY_LOCATION = `${BASE_URL}/${INDEX_KEY}.txt`;
 
 /* ── All URLs (mirrors sitemap.ts logic — no need to run Next.js) ───── */
